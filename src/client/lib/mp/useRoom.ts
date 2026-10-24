@@ -37,6 +37,7 @@ import {
 } from "../../../shared/multiplayer/constants";
 import { sound } from "../sound";
 import { playerToken } from "./identity";
+import { socketUrl } from "../origin";
 
 export type ConnectionStatus = "connecting" | "open" | "reconnecting" | "closed";
 
@@ -477,10 +478,9 @@ export function useRoom(code: string | undefined, options: UseRoomOptions = {}) 
     const connect = () => {
       if (disposed || deliberateRef.current) return;
 
-      const scheme = window.location.protocol === "https:" ? "wss" : "ws";
       const params = new URLSearchParams({ t: playerToken() });
       if (display) params.set("display", "1");
-      const url = `${scheme}://${window.location.host}/api/mp/rooms/${code}/ws?${params}`;
+      const url = socketUrl(`/api/mp/rooms/${code}/ws?${params}`);
 
       let socket: WebSocket;
       try {

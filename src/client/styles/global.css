@@ -40,6 +40,9 @@ body {
   display: flex;
   flex-direction: column;
   padding-block-end: var(--dock-offset, 0px);
+  /* Under the status bar in the native app (viewport-fit=cover). Zero in a
+     browser tab, where the browser's own chrome already sits above the page. */
+  padding-block-start: env(safe-area-inset-top, 0px);
 }
 
 h1, h2, h3, h4, p, figure, ul, ol, dl, dd {

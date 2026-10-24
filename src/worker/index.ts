@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import type { Env } from "./env";
 import { quizRoutes } from "./routes/quiz";
 import { challengeRoutes } from "./routes/challenges";
@@ -83,6 +84,19 @@ app.use("/api/*", async (c, next) => {
     c.res.headers.set("Cache-Control", "no-store");
   }
 });
+
+/**
+ * The native app is the one cross-origin caller.
+ *
+ * Capacitor serves the bundle from capacitor://localhost on iOS and
+ * https://localhost on Android, so every API call from the app is cross-origin
+ * and the JSON POSTs are preflighted. Those two origins, and only those, are
+ * allowed: the web app is same-origin and needs nothing here. No credentials
+ * are involved: the API has no cookies, and the player token travels in the URL.
+ * WebSockets are not subject to CORS and are unaffected.
+ */
+const NATIVE_APP_ORIGINS = ["capacitor://localhost", "https://localhost"];
+app.use("/api/*", cors({ origin: NATIVE_APP_ORIGINS, allowMethods: ["GET", "POST", "OPTIONS"], maxAge: 86400 }));
 
 app.route("/api/quiz", quizRoutes);
 app.route("/api/challenges", challengeRoutes);

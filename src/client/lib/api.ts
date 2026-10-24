@@ -37,6 +37,7 @@
 
 import type { AnswerRecord, Quiz, QuizChallenge, QuizConfiguration, ScoreBreakdown } from "../../shared/types";
 import type { MultiplayerMode } from "../../shared/multiplayer/types";
+import { apiUrl } from "./origin";
 import { noteRequestId, requestFinished, requestStarted } from "./startup";
 
 export type ApiErrorKind =
@@ -162,7 +163,7 @@ async function attempt(path: string, options: RequestOptions, timeoutMs: number)
   }
 
   try {
-    const response = await fetch(path, {
+    const response = await fetch(apiUrl(path), {
       method: options.method ?? "GET",
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
