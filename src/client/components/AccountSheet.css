@@ -1,0 +1,110 @@
+/* The account invitation rises from the thumb, like the answer-mode sheet. */
+.account-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(4, 8, 15, 0.62);
+  backdrop-filter: blur(3px);
+  animation: fade-in 140ms var(--ease) both;
+}
+
+.account-sheet {
+  width: 100%;
+  max-width: var(--page);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px var(--gutter) calc(20px + env(safe-area-inset-bottom, 0px));
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border: 1px solid var(--line);
+  border-block-end: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-3);
+  text-align: center;
+  animation: account-sheet-up 240ms var(--ease) both;
+}
+
+@keyframes account-sheet-up {
+  from { transform: translateY(18px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.account-sheet-badge {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: var(--r-md);
+  background: var(--green-wash);
+  color: var(--green-bright);
+}
+
+.account-sheet-title {
+  margin-block-start: 14px;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.account-sheet-sub {
+  margin-block-start: 4px;
+  color: var(--text-2);
+}
+
+.account-sheet-points {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-block: 20px 22px;
+  text-align: start;
+}
+
+.account-sheet-points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-sheet-points svg { color: var(--green); flex: none; }
+
+/* Apple's own button: white on a dark ground, the system logo, the localised
+   title. Its look is Apple's, not ours, so it does not borrow the green. */
+.apple-btn {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: #ffffff;
+  color: #000000;
+  font-family: -apple-system, "SF Pro Text", var(--font-head);
+  font-weight: 600;
+  font-size: 1.08rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--t-1) var(--ease), opacity var(--t-2) var(--ease);
+}
+
+.apple-btn:active:not(:disabled) { transform: scale(0.98); }
+.apple-btn:disabled { opacity: 0.7; cursor: progress; }
+
+.account-sheet-error {
+  margin-block-start: 12px;
+  color: var(--red);
+}
+
+.account-sheet-guest {
+  margin-block-start: 8px;
+  min-height: 44px;
+}
+
+:root[data-motion="off"] .account-sheet,
+:root[data-motion="off"] .account-sheet-backdrop {
+  animation: none !important;
+}

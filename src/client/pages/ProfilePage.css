@@ -1,0 +1,134 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  padding-block: 28px 32px;
+}
+
+.profile-loading {
+  margin-block-start: 40px;
+  text-align: center;
+  color: var(--text-2);
+}
+
+.profile-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: var(--r-pill);
+  background: var(--green);
+  color: var(--on-green);
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 2.3rem;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 12px;
+}
+
+.profile-name {
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+
+.profile-name-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+  margin-block-start: 14px;
+}
+
+.profile-welcome {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--green-bright);
+}
+
+.profile-name-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-align: center;
+}
+
+.profile-name-input:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.profile-name-actions { justify-content: center; }
+
+.profile-error { color: var(--red); }
+
+.profile-provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: 6px;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.profile-section-title {
+  margin-block: 28px 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.profile-stat-value {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.profile-stat-value.is-gold { color: var(--amber-bright); }
+.profile-stat-value.is-green { color: var(--green-bright); }
+
+.profile-stat-label {
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  margin-block-start: 32px;
+}

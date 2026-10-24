@@ -196,3 +196,19 @@
     animation: none;
   }
 }
+
+/* The account button: round, so it reads as a person rather than a setting. */
+.account-btn { border-radius: var(--r-pill); }
+
+.account-btn.is-signed-in {
+  border-color: var(--green);
+  background: var(--green);
+  color: var(--on-green);
+}
+
+.account-btn-initial {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1;
+}

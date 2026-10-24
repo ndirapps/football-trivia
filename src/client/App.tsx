@@ -18,6 +18,7 @@ import { DuelSearchPage } from "./pages/DuelSearchPage";
 import { RoomPage } from "./pages/RoomPage";
 import { RoomDisplayPage } from "./pages/RoomDisplayPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { a11y } from "./lib/a11y";
 import { sound } from "./lib/sound";
 import { markRouteRendered, markStage } from "./lib/startup";
@@ -122,6 +123,7 @@ export default function App() {
           <Route path="/room/:code" element={<RoomPage />} />
           <Route path="/room/:code/display" element={<RoomDisplayPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

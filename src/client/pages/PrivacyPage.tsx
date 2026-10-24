@@ -44,6 +44,7 @@ export function PrivacyPage() {
             <Row k="fiq_privacy_v1" scope="local" why="הבחירה שלכם בדף הזה, כדי שלא נשאל בכל כניסה" cat="הכרחי" />
             <Row k="fiq_sound_enabled" scope="local" why="אם הצלילים דלוקים או כבויים" cat="העדפות" />
             <Row k="fiq_a11y_v1" scope="local" why="הגדרות הנגישות: גודל טקסט, ניגודיות, אנימציות, קישורים" cat="העדפות" />
+            <Row k="fiq_account_token" scope="local" why="ההתחברות לחשבון (Sign in with Apple), כדי שתישארו מחוברים. נמחק בהתנתקות" cat="הכרחי" />
             <Row k="fiq_mp_token" scope="session" why="מזהה זמני לחדר רב משתתפים, כדי שרענון או נפילת רשת יחזירו אתכם לאותו מקום עם אותו ניקוד" cat="הכרחי" />
             <Row k="fiq_mp_name" scope="local" why="השם שבחרתם לרב משתתפים, כדי לא להקליד אותו כל פעם" cat="העדפות" />
             <Row k="fiq_recent_questions" scope="local" why="מזהים של שאלות שראיתם, כדי להעדיף שאלות חדשות" cat="היסטוריה" />

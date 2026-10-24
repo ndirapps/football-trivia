@@ -4,6 +4,7 @@ import { countMount, countRender } from "../lib/liveness";
 import { BallMark } from "./BallMark";
 import { SoundToggle } from "./SoundToggle";
 import { A11yMenu } from "./A11yMenu";
+import { AccountButton } from "./AccountButton";
 import { Icon } from "./Icon";
 import "./Header.css";
 
@@ -47,6 +48,7 @@ export function Header() {
           )}
           <SoundToggle />
           <A11yMenu />
+          {!playing && <AccountButton />}
         </div>
       </div>
     </header>

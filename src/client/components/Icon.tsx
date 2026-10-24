@@ -33,6 +33,8 @@ export type IconName =
   | "arrow"
   | "clock"
   | "target"
+  | "user"
+  | "pencil"
   | "sliders"
   | "stadium"
   | "route"
@@ -182,6 +184,13 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <circle cx="12" cy="12" r="0.9" />
     </>
   ),
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 20c1-3.8 4-6 7.5-6s6.5 2.2 7.5 6" />
+    </>
+  ),
+  pencil: <path d="M4 20h4L19 9l-4-4L4 16z" />,
   sliders: (
     <>
       <path d="M4 8h10M18 8h2M4 16h4M12 16h8" />

@@ -64,6 +64,7 @@
   },
   "homepage": "https://github.com/Naorl98/football-trivia#readme",
   "dependencies": {
+    "@capacitor-community/apple-sign-in": "^7.1.0",
     "@capacitor/android": "^8.5.3",
     "@capacitor/core": "^8.5.3",
     "@capacitor/haptics": "^8.0.2",
