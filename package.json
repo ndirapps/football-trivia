@@ -46,7 +46,10 @@
     "qa:mobile:all": "node scripts/mobile-matrix-qa.mjs --phase=all --loads=100 --hold=15",
     "qa:builder": "node scripts/builder-qa.mjs",
     "qa:blank": "node scripts/blankscreen-qa.mjs",
-    "qa:blank:stress": "node scripts/blank-stress.mjs"
+    "qa:blank:stress": "node scripts/blank-stress.mjs",
+    "app:build": "VITE_API_ORIGIN=${VITE_API_ORIGIN:-https://football-iq.naorl.workers.dev} vite build && cap sync",
+    "app:ios": "npm run app:build && cap open ios",
+    "app:android": "npm run app:build && cap open android"
   },
   "repository": {
     "type": "git",
@@ -61,6 +64,13 @@
   },
   "homepage": "https://github.com/Naorl98/football-trivia#readme",
   "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
     "hono": "^4.13.11",
     "qrcode-generator": "^2.0.4",
     "react": "^19.3.0",
@@ -68,6 +78,7 @@
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "@cloudflare/vite-plugin": "^1.62.1",
     "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
