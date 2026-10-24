@@ -7,6 +7,8 @@ import { dailyRoutes } from "./routes/daily";
 import { attemptRoutes } from "./routes/attempts";
 import { multiplayerRoutes } from "./routes/multiplayer";
 import { healthRoutes } from "./routes/health";
+import { authRoutes } from "./routes/auth";
+import { meRoutes } from "./routes/me";
 import { cspNonce, harden, HASHED_ASSET_PREFIX, securityHeaders } from "./lib/security";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -93,10 +95,19 @@ app.use("/api/*", async (c, next) => {
  * and the JSON POSTs are preflighted. Those two origins, and only those, are
  * allowed: the web app is same-origin and needs nothing here. No credentials
  * are involved: the API has no cookies, and the player token travels in the URL.
- * WebSockets are not subject to CORS and are unaffected.
+ * WebSockets are not subject to CORS and are unaffected. `Authorization` carries
+ * the account session token (src/worker/auth/session.ts).
  */
 const NATIVE_APP_ORIGINS = ["capacitor://localhost", "https://localhost"];
-app.use("/api/*", cors({ origin: NATIVE_APP_ORIGINS, allowMethods: ["GET", "POST", "OPTIONS"], maxAge: 86400 }));
+app.use(
+  "/api/*",
+  cors({
+    origin: NATIVE_APP_ORIGINS,
+    allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    maxAge: 86400,
+  })
+);
 
 app.route("/api/quiz", quizRoutes);
 app.route("/api/challenges", challengeRoutes);
@@ -104,6 +115,8 @@ app.route("/api/daily", dailyRoutes);
 app.route("/api/attempts", attemptRoutes);
 app.route("/api/mp", multiplayerRoutes);
 app.route("/api/health", healthRoutes);
+app.route("/api/auth", authRoutes);
+app.route("/api/me", meRoutes);
 
 // --------------------------------------------------------------------- failures
 

@@ -31,6 +31,8 @@ export interface RateLimiters {
   RL_QUIZ?: RateLimiter;
   /** Attempt logging: the only unauthenticated D1 write in the product. */
   RL_WRITE?: RateLimiter;
+  /** Sign in with Apple: each call fetches Apple keys and may create a user. */
+  RL_AUTH?: RateLimiter;
 }
 
 export type RateLimiterName = keyof RateLimiters;
