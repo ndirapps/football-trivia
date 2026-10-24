@@ -120,7 +120,7 @@ const COPY: Record<ApiErrorKind, string> = {
 };
 
 interface RequestOptions {
-  method?: "GET" | "POST" | "PATCH";
+  method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   timeoutMs?: number;
   /**
@@ -404,4 +404,17 @@ export function updateMe(displayName: string): Promise<{ user: AccountUser }> {
 
 export function signOutRequest(): Promise<{ ok: true }> {
   return request("/api/auth/signout", { method: "POST" });
+}
+
+export function mergeLocalStatsRequest(local: {
+  played: number;
+  wins: number;
+  losses: number;
+  bestStreak: number;
+}): Promise<{ merged: boolean; stats: AccountStats }> {
+  return request("/api/me/merge-local", { method: "POST", body: local });
+}
+
+export function deleteAccountRequest(): Promise<{ deleted: true }> {
+  return request("/api/me", { method: "DELETE", timeoutMs: TIMEOUT_HEAVY_MS });
 }

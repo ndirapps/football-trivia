@@ -4,6 +4,7 @@ import { MODES } from "../../shared/multiplayer/constants";
 import type { MultiplayerMode } from "../../shared/multiplayer/types";
 import { allocateRoom, roomStub } from "../multiplayer/allocate";
 import { gate } from "../lib/ratelimit";
+import { ACCOUNT_USER_HEADER, userIdForToken } from "../auth/session";
 import type { Env } from "../env";
 
 export const multiplayerRoutes = new Hono<{ Bindings: Env }>();
@@ -88,9 +89,9 @@ multiplayerRoutes.get("/rooms/:code", async (c) => {
 /**
  * The room socket. Everything real happens over this.
  *
- * The request is handed to the Durable Object untouched, so the object sees the
- * player's token and the display flag exactly as sent and this layer never has to
- * understand them.
+ * The request is handed to the Durable Object as sent — player token and display
+ * flag included — except for the account session, which is swapped for a verified
+ * user id (below).
  */
 multiplayerRoutes.get("/rooms/:code/ws", async (c) => {
   const limited = await gate(c, "RL_SOCKET", "room-ws");
@@ -101,7 +102,19 @@ multiplayerRoutes.get("/rooms/:code/ws", async (c) => {
   if (c.req.header("Upgrade") !== "websocket") {
     return c.json({ error: "Expected WebSocket upgrade" }, 426);
   }
-  return roomStub(c.env, code).fetch(c.req.raw);
+
+  // A signed-in player's session rides along as `a`, because a WebSocket cannot
+  // carry an Authorization header. It is resolved here and never reaches the
+  // room: the room only ever sees a user id this Worker verified.
+  const url = new URL(c.req.url);
+  const accountToken = url.searchParams.get("a");
+  url.searchParams.delete("a");
+  const forwarded = new Request(url.toString(), c.req.raw);
+  forwarded.headers.delete(ACCOUNT_USER_HEADER);
+  const userId = await userIdForToken(c.env.DB, accountToken);
+  if (userId !== null) forwarded.headers.set(ACCOUNT_USER_HEADER, String(userId));
+
+  return roomStub(c.env, code).fetch(forwarded);
 });
 
 multiplayerRoutes.get("/matchmaking/ws", async (c) => {

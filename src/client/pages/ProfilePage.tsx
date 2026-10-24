@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { accountsAvailable, refreshAccount, renameAccount, signOut, useAccount } from "../lib/account";
+import { accountsAvailable, deleteAccount, refreshAccount, renameAccount, signOut, useAccount } from "../lib/account";
 import { messageHeOf } from "../lib/api";
 import { rememberPlayerName } from "../lib/mp/identity";
 import { sound } from "../lib/sound";
@@ -22,6 +22,7 @@ export function ProfilePage() {
   const welcome = params.get("welcome") === "1";
 
   const [editing, setEditing] = useState(welcome);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -148,6 +149,90 @@ export function ProfilePage() {
           }}
         >
           התנתקות
+        </button>
+        <button
+          className="btn btn-quiet profile-delete"
+          onClick={() => {
+            sound.play("click");
+            setConfirmingDelete(true);
+          }}
+        >
+          מחיקת החשבון
+        </button>
+      </div>
+
+      {confirmingDelete && (
+        <DeleteAccountSheet
+          onDismiss={() => setConfirmingDelete(false)}
+          onDeleted={() => navigate("/", { replace: true })}
+        />
+      )}
+    </div>
+  );
+}
+
+/**
+ * The last step before deletion: says plainly what goes and that it cannot be
+ * undone. Cancel is the focused, safe default.
+ */
+function DeleteAccountSheet({ onDismiss, onDeleted }: { onDismiss: () => void; onDeleted: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    cancelRef.current?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !busy) onDismiss();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onDismiss, busy]);
+
+  async function confirm() {
+    setError(null);
+    setBusy(true);
+    try {
+      await deleteAccount();
+      onDeleted();
+    } catch (e) {
+      setError(messageHeOf(e));
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="account-sheet-backdrop" onClick={busy ? undefined : onDismiss}>
+      <div
+        className="account-sheet"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-account-title"
+        aria-describedby="delete-account-body"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <span className="account-sheet-badge is-danger" aria-hidden="true">
+          <Icon name="cross" size={26} />
+        </span>
+        <h2 id="delete-account-title" className="account-sheet-title">
+          למחוק את החשבון?
+        </h2>
+        <p id="delete-account-body" className="account-sheet-sub profile-delete-body">
+          זה מוחק לצמיתות את השם, הסטטיסטיקה והקישור ל-Apple. אי אפשר לשחזר.
+          <br />
+          אפשר להמשיך לשחק כאורח.
+        </p>
+
+        <button className="btn btn-lg profile-delete-confirm" onClick={confirm} disabled={busy} aria-busy={busy}>
+          {busy ? "מוחק…" : "כן, למחוק לצמיתות"}
+        </button>
+        {error && (
+          <p className="account-sheet-error" role="alert">
+            {error}
+          </p>
+        )}
+        <button ref={cancelRef} className="btn btn-quiet account-sheet-guest" onClick={onDismiss} disabled={busy}>
+          ביטול
         </button>
       </div>
     </div>

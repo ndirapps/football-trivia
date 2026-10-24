@@ -3,16 +3,24 @@
 //   POST /api/auth/apple    { identityToken, nonce, displayName? } -> { token, user, stats }
 //   POST /api/auth/signout  ends the session the request carries
 //
-// The Apple `authorizationCode` the app also receives is accepted and ignored
-// for now: exchanging it for a refresh token needs the Sign in with Apple key,
-// and the only use of that refresh token is revoking the grant when an account
-// is deleted. That arrives with account deletion.
+// The Apple `authorizationCode` the app also receives is exchanged, after the
+// response, for a refresh token whose only use is revoking the grant when the
+// account is deleted. It needs the Sign in with Apple key; without it, sign-in
+// works the same and deletion simply has nothing to revoke.
 
 import { Hono } from "hono";
 import type { Env } from "../env";
 import { verifyAppleIdentityToken } from "../auth/appleToken";
+import { appleClientConfig, exchangeAppleCode } from "../auth/appleClient";
 import { bearerToken, hashSessionToken, newSessionToken } from "../auth/session";
-import { deleteSession, findOrCreateAppleUser, getUserStats, insertSession } from "../db/users";
+import {
+  deleteSession,
+  findOrCreateAppleUser,
+  getAppleRefreshToken,
+  getUserStats,
+  insertSession,
+  setAppleRefreshToken,
+} from "../db/users";
 import { sanitizePlayerName } from "../../shared/multiplayer/names";
 import { gate } from "../lib/ratelimit";
 
@@ -57,6 +65,21 @@ authRoutes.post("/apple", async (c) => {
   const token = newSessionToken();
   await insertSession(c.env.DB, user.id, await hashSessionToken(token));
   const stats = await getUserStats(c.env.DB, user.id);
+
+  const code = typeof b.authorizationCode === "string" && b.authorizationCode.length <= 1024 ? b.authorizationCode : "";
+  const apple = appleClientConfig(c.env, APP_BUNDLE_ID);
+  if (code && apple) {
+    const userId = user.id;
+    const db = c.env.DB;
+    // After the response: the player is not kept waiting on a second Apple call.
+    c.executionCtx.waitUntil(
+      (async () => {
+        if (await getAppleRefreshToken(db, userId)) return;
+        const refreshToken = await exchangeAppleCode(apple, code);
+        if (refreshToken) await setAppleRefreshToken(db, userId, refreshToken);
+      })().catch((err) => console.error("auth: apple code exchange", { name: (err as Error)?.name }))
+    );
+  }
 
   return c.json({ token, user: { displayName: user.displayName, isNew: user.created }, stats });
 });

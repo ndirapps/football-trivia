@@ -38,6 +38,7 @@ import {
 import { sound } from "../sound";
 import { playerToken } from "./identity";
 import { socketUrl } from "../origin";
+import { readAccountToken } from "../accountToken";
 
 export type ConnectionStatus = "connecting" | "open" | "reconnecting" | "closed";
 
@@ -480,6 +481,11 @@ export function useRoom(code: string | undefined, options: UseRoomOptions = {}) 
 
       const params = new URLSearchParams({ t: playerToken() });
       if (display) params.set("display", "1");
+      // Signed in: the Worker turns this into a verified user id so full time
+      // can credit the game to the account. Browsers cannot send headers on a
+      // WebSocket, which is why it travels in the URL.
+      const accountToken = display ? null : readAccountToken();
+      if (accountToken) params.set("a", accountToken);
       const url = socketUrl(`/api/mp/rooms/${code}/ws?${params}`);
 
       let socket: WebSocket;

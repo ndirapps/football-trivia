@@ -3,14 +3,16 @@ export interface AttemptInput {
   score: number;
   questionCount: number;
   durationSeconds: number;
+  /** The signed-in player, or null for a guest. */
+  userId?: number | null;
 }
 
 export async function insertAttempt(db: D1Database, input: AttemptInput): Promise<number> {
   const result = await db
     .prepare(
-      `INSERT INTO quiz_attempts (challenge_id, score, question_count, duration_seconds) VALUES (?, ?, ?, ?)`
+      `INSERT INTO quiz_attempts (challenge_id, score, question_count, duration_seconds, user_id) VALUES (?, ?, ?, ?, ?)`
     )
-    .bind(input.challengeId, input.score, input.questionCount, input.durationSeconds)
+    .bind(input.challengeId, input.score, input.questionCount, input.durationSeconds, input.userId ?? null)
     .run();
   return Number(result.meta.last_row_id);
 }

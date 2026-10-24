@@ -14,7 +14,9 @@ import { Capacitor } from "@capacitor/core";
 import { SignInWithApple } from "@capacitor-community/apple-sign-in";
 import {
   ApiError,
+  deleteAccountRequest,
   fetchMe,
+  mergeLocalStatsRequest,
   signInWithAppleRequest,
   signOutRequest,
   updateMe,
@@ -22,7 +24,7 @@ import {
   type AccountUser,
 } from "./api";
 import { clearAccountToken, readAccountToken, writeAccountToken } from "./accountToken";
-import { savedPlayerName } from "./mp/identity";
+import { readLocalStats, savedPlayerName } from "./mp/identity";
 
 const APP_BUNDLE_ID = "com.royasraf.footballiq";
 /** Apple's code for "the user closed the sheet" — not an error worth showing. */
@@ -100,6 +102,18 @@ export async function signInWithApple(): Promise<{ isNew: boolean } | null> {
   });
   writeAccountToken(result.token);
   setState({ status: "signed-in", user: { displayName: result.user.displayName }, stats: result.stats });
+
+  // The device's own duel record, offered once. The server accepts it once per
+  // account, ever, so offering it on every sign-in is safe.
+  const local = readLocalStats();
+  if (local.played > 0) {
+    try {
+      const { stats } = await mergeLocalStatsRequest(local);
+      if (state.status === "signed-in") setState({ ...state, stats });
+    } catch {
+      /* the merge is a bonus; the sign-in already succeeded */
+    }
+  }
   return { isNew: result.user.isNew };
 }
 
@@ -138,6 +152,16 @@ export async function signOut(): Promise<void> {
   } catch {
     /* the token is dropped below regardless */
   }
+  clearAccountToken();
+  setState({ status: "guest" });
+}
+
+/**
+ * Deletes the account on the server, then forgets it here. Unlike sign-out this
+ * must reach the server: the token is kept on failure so the player can retry.
+ */
+export async function deleteAccount(): Promise<void> {
+  await deleteAccountRequest();
   clearAccountToken();
   setState({ status: "guest" });
 }

@@ -117,3 +117,143 @@ export function toStats(row: StatsRow | null): UserStats {
     bestStreak: row.best_streak,
   };
 }
+
+// ------------------------------------------------------------------ recording
+
+/** The longest run of consecutive correct answers in a quiz. */
+export function longestCorrectStreak(answers: readonly { correct: boolean }[]): number {
+  let best = 0;
+  let run = 0;
+  for (const answer of answers) {
+    run = answer.correct ? run + 1 : 0;
+    if (run > best) best = run;
+  }
+  return best;
+}
+
+/** One finished quiz: count it, add its score, and keep the best score and streak. */
+export async function recordQuizForUser(db: D1Database, userId: number, score: number, streak: number): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE user_stats
+          SET quizzes_played = quizzes_played + 1,
+              quiz_score_total = quiz_score_total + ?,
+              best_quiz_score = MAX(best_quiz_score, ?),
+              best_streak = MAX(best_streak, ?)
+        WHERE user_id = ?`
+    )
+    .bind(score, score, streak, userId)
+    .run();
+}
+
+export interface DuelOutcome {
+  played: number;
+  won: number;
+  lost: number;
+}
+
+/**
+ * What a finished room means for one player's duel record.
+ *
+ * Only duel modes count as duels. A sole winner won; a tie for first is played
+ * but neither won nor lost; everyone else lost — including the player who
+ * forfeited by never coming back.
+ */
+export function duelOutcome(
+  game: { winnerIds: readonly string[] },
+  playerId: string,
+  isDuel: boolean
+): DuelOutcome {
+  if (!isDuel) return { played: 0, won: 0, lost: 0 };
+  const soleWinner = game.winnerIds.length === 1 ? game.winnerIds[0] : null;
+  if (soleWinner === playerId) return { played: 1, won: 1, lost: 0 };
+  if (game.winnerIds.length > 1 && game.winnerIds.includes(playerId)) return { played: 1, won: 0, lost: 0 };
+  return { played: 1, won: 0, lost: 1 };
+}
+
+export function recordRoomForUserStatement(
+  db: D1Database,
+  userId: number,
+  outcome: DuelOutcome,
+  bestStreak: number
+): D1PreparedStatement {
+  return db
+    .prepare(
+      `UPDATE user_stats
+          SET duels_played = duels_played + ?,
+              duels_won = duels_won + ?,
+              duels_lost = duels_lost + ?,
+              best_streak = MAX(best_streak, ?)
+        WHERE user_id = ?`
+    )
+    .bind(outcome.played, outcome.won, outcome.lost, bestStreak, userId);
+}
+
+// ------------------------------------------------------------------ the one-time device merge
+
+export interface LocalDuelStats {
+  played: number;
+  wins: number;
+  losses: number;
+  bestStreak: number;
+}
+
+/** Device-side numbers are the client's word: bounded, whole, and internally consistent. */
+export function clampLocalStats(value: unknown): LocalDuelStats | null {
+  if (typeof value !== "object" || value === null) return null;
+  const v = value as Record<string, unknown>;
+  const whole = (n: unknown, max: number) =>
+    typeof n === "number" && Number.isFinite(n) ? Math.min(max, Math.max(0, Math.trunc(n))) : 0;
+  const played = whole(v.played, 10_000);
+  const wins = Math.min(whole(v.wins, 10_000), played);
+  const losses = Math.min(whole(v.losses, 10_000), played - wins);
+  return { played, wins, losses, bestStreak: whole(v.bestStreak, 100) };
+}
+
+/** Adds the device's numbers once per account. Returns whether this call was the one. */
+export async function mergeLocalStats(db: D1Database, userId: number, local: LocalDuelStats): Promise<boolean> {
+  const result = await db
+    .prepare(
+      `UPDATE user_stats
+          SET duels_played = duels_played + ?,
+              duels_won = duels_won + ?,
+              duels_lost = duels_lost + ?,
+              best_streak = MAX(best_streak, ?),
+              local_merged = 1
+        WHERE user_id = ? AND local_merged = 0`
+    )
+    .bind(local.played, local.wins, local.losses, local.bestStreak, userId)
+    .run();
+  return (result.meta.changes ?? 0) > 0;
+}
+
+// ------------------------------------------------------------------ Apple grant and deletion
+
+export async function setAppleRefreshToken(db: D1Database, userId: number, refreshToken: string): Promise<void> {
+  await db.prepare(`UPDATE users SET apple_refresh_token = ? WHERE id = ?`).bind(refreshToken, userId).run();
+}
+
+export async function getAppleRefreshToken(db: D1Database, userId: number): Promise<string | null> {
+  const row = await db
+    .prepare(`SELECT apple_refresh_token FROM users WHERE id = ?`)
+    .bind(userId)
+    .first<{ apple_refresh_token: string | null }>();
+  return row?.apple_refresh_token ?? null;
+}
+
+/**
+ * Removes the account and everything it owns, in one batch.
+ *
+ * Spelled out rather than left to ON DELETE CASCADE / SET NULL, so the result
+ * does not depend on foreign-key enforcement being switched on: the history
+ * rows stay (they are anonymous game records) but lose their owner.
+ */
+export async function deleteUser(db: D1Database, userId: number): Promise<void> {
+  await db.batch([
+    db.prepare(`UPDATE quiz_attempts SET user_id = NULL WHERE user_id = ?`).bind(userId),
+    db.prepare(`UPDATE multiplayer_game_players SET user_id = NULL WHERE user_id = ?`).bind(userId),
+    db.prepare(`DELETE FROM sessions WHERE user_id = ?`).bind(userId),
+    db.prepare(`DELETE FROM user_stats WHERE user_id = ?`).bind(userId),
+    db.prepare(`DELETE FROM users WHERE id = ?`).bind(userId),
+  ]);
+}

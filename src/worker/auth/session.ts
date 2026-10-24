@@ -61,3 +61,20 @@ export async function currentUser<E extends { Bindings: Env }>(
 export function unauthorized<E extends { Bindings: Env }>(c: Context<E>) {
   return c.json({ error: "UNAUTHORIZED", messageHe: "צריך להתחבר מחדש." }, 401);
 }
+
+/**
+ * The header the Worker uses to tell a room which account a socket belongs to.
+ *
+ * Browsers cannot put an Authorization header on a WebSocket, so the app sends
+ * its session token as the `a` query parameter. The Worker resolves it here,
+ * strips it from the URL, deletes any copy of this header the client may have
+ * sent, and sets it only from a verified session. A room is reachable only
+ * through the Worker, so inside the room this header can be trusted.
+ */
+export const ACCOUNT_USER_HEADER = "X-Fiq-Account-User";
+
+export async function userIdForToken(db: D1Database, token: string | null): Promise<number | null> {
+  if (!token || token.length > MAX_TOKEN_LENGTH) return null;
+  const user = await userBySessionHash(db, await hashSessionToken(token));
+  return user?.id ?? null;
+}
