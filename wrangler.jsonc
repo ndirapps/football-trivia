@@ -56,7 +56,8 @@
   // Sign in with Apple, server side. Not secret: the team id and the key's id.
   // The key itself is the APPLE_PRIVATE_KEY secret (`wrangler secret put`).
   "vars": {
-    "APPLE_TEAM_ID": "YG2T959QRY"
+    "APPLE_TEAM_ID": "YG2T959QRY",
+    "APPLE_KEY_ID": "6H5F78HW99"
   },
 
   "observability": {
