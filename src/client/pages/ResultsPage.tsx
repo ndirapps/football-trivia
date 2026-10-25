@@ -10,6 +10,7 @@ import { ScoreRing } from "../components/ScoreRing";
 import { Confetti } from "../components/Confetti";
 import { Icon, FlameMark } from "../components/Icon";
 import { sound } from "../lib/sound";
+import { ReminderOffer } from "../components/ReminderOffer";
 import "./ResultsPage.css";
 
 function mmss(total: number): string {
@@ -165,6 +166,8 @@ export function ResultsPage() {
           {shareMessage ?? ""}
         </p>
       </div>
+
+      <ReminderOffer />
     </div>
   );
 }

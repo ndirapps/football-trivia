@@ -1,9 +1,11 @@
 import { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { isNativeApp } from "./lib/platform";
 import { privacy } from "./lib/privacy";
+import { listenForReminderTaps } from "./lib/reminders";
+import { listenForDeepLinks } from "./lib/deepLinks";
 
 // In the app the consent bar is website furniture: everything it governs lives
 // in the app's own sandbox on the phone, and the App Store privacy labels and
@@ -35,6 +37,12 @@ import { countMount, countRender } from "./lib/liveness";
 
 export default function App() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  // The daily reminder opens the daily challenge. App only; a no-op elsewhere.
+  useEffect(() => listenForReminderTaps(navigate), [navigate]);
+  // Room, challenge and daily links open the app on the matching route.
+  useEffect(() => listenForDeepLinks(navigate), [navigate]);
 
   /*
     Counted, because the one symptom never explained was titles "shaking".

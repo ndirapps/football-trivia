@@ -299,6 +299,28 @@ async function shell(env: Env, url: URL): Promise<Response> {
 }
 
 /**
+ * Universal links: which paths on this site the iOS app may open instead.
+ *
+ * A room invite, a challenge link and the daily challenge open the app when it
+ * is installed and fall back to this website when it is not. Apple fetches the
+ * file from its CDN, so it is plain JSON with no redirect and no auth.
+ */
+const APPLE_APP_SITE_ASSOCIATION = {
+  applinks: {
+    details: [
+      {
+        appIDs: ["YG2T959QRY.com.royasraf.footballiq"],
+        components: [{ "/": "/room/*" }, { "/": "/challenge/*" }, { "/": "/daily" }],
+      },
+    ],
+  },
+};
+
+app.get("/.well-known/apple-app-site-association", (c) =>
+  c.json(APPLE_APP_SITE_ASSOCIATION, 200, { "Cache-Control": "public, max-age=3600" })
+);
+
+/**
  * Anything that is not an API route is the client's business.
  *
  * API 404s stay JSON so the client's one error path keeps working; everything

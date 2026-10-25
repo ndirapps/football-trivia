@@ -38,7 +38,7 @@ export const KEYS_BY_CATEGORY: Record<ConsentCategory, { local: string[]; sessio
   // without it you are signed out — and it is only ever written by signing in.
   // `fiq_welcome_seen` keeps the app's first screen from coming back.
   essential: { local: ["fiq_account_token", "fiq_welcome_seen"], session: ["fiq_active_quiz", "fiq_last_result", "fiq_mp_token"] },
-  preferences: { local: ["fiq_sound_enabled", "fiq_a11y_v1", "fiq_mp_name"], session: [] },
+  preferences: { local: ["fiq_sound_enabled", "fiq_a11y_v1", "fiq_mp_name", "fiq_daily_reminder"], session: [] },
   history: { local: ["fiq_recent_questions", "fiq_mp_stats"], session: [] },
 };
 

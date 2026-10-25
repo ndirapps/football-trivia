@@ -47,6 +47,7 @@ export function PrivacyPage() {
             <Row k="fiq_account_token" scope="local" why="ההתחברות לחשבון (Sign in with Apple), כדי שתישארו מחוברים. נמחק בהתנתקות" cat="הכרחי" />
             <Row k="fiq_welcome_seen" scope="local" why="באפליקציה: שמסך הפתיחה כבר הוצג, כדי שלא יחזור בכל פתיחה" cat="הכרחי" />
             <Row k="fiq_mp_token" scope="session" why="מזהה זמני לחדר רב משתתפים, כדי שרענון או נפילת רשת יחזירו אתכם לאותו מקום עם אותו ניקוד" cat="הכרחי" />
+            <Row k="fiq_daily_reminder" scope="local" why="באפליקציה: אם ביקשתם תזכורת יומית לאתגר. התזכורת עצמה מתוזמנת בטלפון ולא נשלחת מאיתנו" cat="העדפות" />
             <Row k="fiq_mp_name" scope="local" why="השם שבחרתם לרב משתתפים, כדי לא להקליד אותו כל פעם" cat="העדפות" />
             <Row k="fiq_recent_questions" scope="local" why="מזהים של שאלות שראיתם, כדי להעדיף שאלות חדשות" cat="היסטוריה" />
             <Row k="fiq_mp_stats" scope="local" why="ספירה מקומית של משחקי רב משתתפים, נצחונות והפסדים" cat="היסטוריה" />
