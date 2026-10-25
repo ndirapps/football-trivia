@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "football-iq",
   "main": "src/worker/index.ts",
-  "account_id": "367bed473a2c48604d27f2e668162c49",
+  "account_id": "fb2cb207690ef0312397de4b83f295e1",
   "compatibility_date": "2026-09-29",
   "compatibility_flags": ["nodejs_compat"],
 
@@ -53,6 +53,13 @@
     "run_worker_first": true
   },
 
+  // Sign in with Apple, server side. Not secret: the team id and the key's id.
+  // The key itself is the APPLE_PRIVATE_KEY secret (`wrangler secret put`).
+  "vars": {
+    "APPLE_TEAM_ID": "YG2T959QRY",
+    "APPLE_KEY_ID": "6H5F78HW99"
+  },
+
   "observability": {
     "enabled": true
   },
@@ -61,7 +68,7 @@
     {
       "binding": "DB",
       "database_name": "football-iq-db",
-      "database_id": "f9fccac0-e41e-49d8-ab11-2493b4047130",
+      "database_id": "97f23d19-6710-4b1c-82df-3352ee5a41cc",
       "migrations_dir": "migrations"
     }
   ],
@@ -155,6 +162,11 @@
       "name": "RL_WRITE",
       "namespace_id": "2005",
       "simple": { "limit": 30, "period": 60 }
+    },
+    {
+      "name": "RL_AUTH",
+      "namespace_id": "2006",
+      "simple": { "limit": 10, "period": 60 }
     }
   ]
 }

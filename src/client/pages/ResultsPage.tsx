@@ -5,10 +5,12 @@ import type { Category } from "../../shared/types";
 import { createChallenge, fetchQuiz, messageHeOf } from "../lib/api";
 import { loadResult, saveActiveQuiz } from "../lib/quizSession";
 import { getRecentQuestionIds } from "../lib/recentQuestions";
+import { publicOrigin } from "../lib/origin";
 import { ScoreRing } from "../components/ScoreRing";
 import { Confetti } from "../components/Confetti";
 import { Icon, FlameMark } from "../components/Icon";
 import { sound } from "../lib/sound";
+import { ReminderOffer } from "../components/ReminderOffer";
 import "./ResultsPage.css";
 
 function mmss(total: number): string {
@@ -67,7 +69,7 @@ export function ResultsPage() {
     sound.play("click");
     try {
       const { challenge } = await createChallenge(quiz.configuration);
-      const url = `${window.location.origin}/challenge/${challenge.publicId}`;
+      const url = `${publicOrigin()}/challenge/${challenge.publicId}`;
       const data = {
         title: "Football IQ",
         text: `קיבלתי ${score.points}/${score.total} ב-Football IQ. מוכנים להתמודד?`,
@@ -164,6 +166,8 @@ export function ResultsPage() {
           {shareMessage ?? ""}
         </p>
       </div>
+
+      <ReminderOffer />
     </div>
   );
 }

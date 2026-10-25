@@ -33,6 +33,8 @@ import { computeScore } from "../../shared/scoring";
 import type { AnswerRecord } from "../../shared/types";
 import { getChallengeRowIdByPublicId, insertAttempt } from "../db/attempts";
 import { gate } from "../lib/ratelimit";
+import { currentUser } from "../auth/session";
+import { longestCorrectStreak, recordQuizForUser } from "../db/users";
 
 export const attemptRoutes = new Hono<{ Bindings: Env }>();
 
@@ -110,13 +112,18 @@ attemptRoutes.post("/", async (c) => {
   const score = computeScore(answers);
 
   const challengeId = publicId ? await getChallengeRowIdByPublicId(c.env.DB, publicId) : null;
+  // Signed in: the attempt is theirs and counts towards their stats. A guest's
+  // attempt is recorded exactly as before, owned by nobody.
+  const user = await currentUser(c);
 
   const attemptId = await insertAttempt(c.env.DB, {
     challengeId,
     score: score.points,
     questionCount: score.total,
     durationSeconds: duration,
+    userId: user?.id ?? null,
   });
+  if (user) await recordQuizForUser(c.env.DB, user.id, score.points, longestCorrectStreak(answers));
 
   return c.json({ attemptId, score });
 });

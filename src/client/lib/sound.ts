@@ -27,6 +27,7 @@
 // rapid clicking cannot turn into noise.
 
 import { privacy } from "./privacy.ts";
+import { haptic } from "./haptics.ts";
 
 export type SoundName =
   | "click"
@@ -297,6 +298,8 @@ class AudioManager {
   // ----------------------------------------------------------------- play
 
   play(name: SoundName) {
+    // Before the mute check on purpose: a tap is felt even on a silent phone.
+    haptic(name);
     if (!this.enabled) return;
 
     // Drop a repeat of the same cue fired within the guard window, so a burst

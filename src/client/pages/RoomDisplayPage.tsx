@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { isValidRoomCode } from "../../shared/multiplayer/roomCode";
 import { isDuelMode, modeMeta } from "../../shared/multiplayer/constants";
 import { roomJoinUrl } from "../../shared/multiplayer/roomCode";
+import { publicOrigin } from "../lib/origin";
 import { useRoom } from "../lib/mp/useRoom";
 import { Announcer, PhaseClock, QrCode } from "../components/mp/MpAtoms";
 import { Countdown, DuelIntro } from "../components/mp/MpStage";
@@ -55,7 +56,7 @@ export function RoomDisplayPage() {
     );
   }
 
-  const url = typeof window === "undefined" ? "" : roomJoinUrl(window.location.origin, room.code);
+  const url = typeof window === "undefined" ? "" : roomJoinUrl(publicOrigin(), room.code);
   const duel = isDuelMode(room.settings.mode);
   const teams = room.settings.mode === "TEAM_BATTLE";
 

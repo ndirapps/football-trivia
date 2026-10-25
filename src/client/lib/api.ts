@@ -37,6 +37,8 @@
 
 import type { AnswerRecord, Quiz, QuizChallenge, QuizConfiguration, ScoreBreakdown } from "../../shared/types";
 import type { MultiplayerMode } from "../../shared/multiplayer/types";
+import { apiUrl } from "./origin";
+import { readAccountToken } from "./accountToken";
 import { noteRequestId, requestFinished, requestStarted } from "./startup";
 
 export type ApiErrorKind =
@@ -118,7 +120,7 @@ const COPY: Record<ApiErrorKind, string> = {
 };
 
 interface RequestOptions {
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   timeoutMs?: number;
   /**
@@ -149,6 +151,10 @@ function definitelyOffline(): boolean {
 async function attempt(path: string, options: RequestOptions, timeoutMs: number): Promise<Response> {
   const headers: Record<string, string> = {};
   if (options.body !== undefined) headers["Content-Type"] = "application/json";
+  // Signed in: every call carries the session, so the server can attribute what
+  // it records. Guests send nothing, and every route behaves as it always has.
+  const accountToken = readAccountToken();
+  if (accountToken) headers.Authorization = `Bearer ${accountToken}`;
 
   let signal: AbortSignal | undefined;
   let fallbackTimer: number | undefined;
@@ -162,7 +168,7 @@ async function attempt(path: string, options: RequestOptions, timeoutMs: number)
   }
 
   try {
-    const response = await fetch(path, {
+    const response = await fetch(apiUrl(path), {
       method: options.method ?? "GET",
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
@@ -361,4 +367,54 @@ export function submitAttempt(payload: {
   // Never retried. A timed-out submission may already have been written, and a
   // second attempt row for one quiz is worse than a missing one.
   return request("/api/attempts", { method: "POST", body: payload, timeoutMs: TIMEOUT_HEAVY_MS });
+}
+
+// ------------------------------------------------------------------ accounts
+
+export interface AccountUser {
+  displayName: string;
+}
+
+export interface AccountStats {
+  quizzesPlayed: number;
+  bestQuizScore: number;
+  averageQuizScore: number;
+  duelsPlayed: number;
+  duelsWon: number;
+  duelsLost: number;
+  bestStreak: number;
+}
+
+export function signInWithAppleRequest(payload: {
+  identityToken: string;
+  authorizationCode: string;
+  nonce: string;
+  displayName: string;
+}): Promise<{ token: string; user: AccountUser & { isNew: boolean }; stats: AccountStats }> {
+  return request("/api/auth/apple", { method: "POST", body: payload, timeoutMs: TIMEOUT_HEAVY_MS });
+}
+
+export function fetchMe(): Promise<{ user: AccountUser; stats: AccountStats }> {
+  return request("/api/me", { retryable: true });
+}
+
+export function updateMe(displayName: string): Promise<{ user: AccountUser }> {
+  return request("/api/me", { method: "PATCH", body: { displayName } });
+}
+
+export function signOutRequest(): Promise<{ ok: true }> {
+  return request("/api/auth/signout", { method: "POST" });
+}
+
+export function mergeLocalStatsRequest(local: {
+  played: number;
+  wins: number;
+  losses: number;
+  bestStreak: number;
+}): Promise<{ merged: boolean; stats: AccountStats }> {
+  return request("/api/me/merge-local", { method: "POST", body: local });
+}
+
+export function deleteAccountRequest(): Promise<{ deleted: true }> {
+  return request("/api/me", { method: "DELETE", timeoutMs: TIMEOUT_HEAVY_MS });
 }

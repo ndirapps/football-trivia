@@ -1,0 +1,113 @@
+/* The app's first screen: full bleed, above the header, below nothing. */
+.welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px) 24px calc(env(safe-area-inset-bottom, 0px) + 28px);
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  animation: fade-in var(--t-3) var(--ease) both;
+}
+
+.welcome-glow {
+  position: absolute;
+  inset-inline: -60px;
+  top: 12%;
+  height: 46%;
+  background: radial-gradient(closest-side, rgba(38, 196, 99, 0.16), transparent);
+  pointer-events: none;
+}
+
+.welcome-hero {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.welcome-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 260px;
+  height: 150px;
+}
+
+.welcome-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.welcome-title {
+  margin-block-start: 18px;
+  font-size: 2.75rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.welcome-sub {
+  margin-block-start: 12px;
+  font-size: 1.12rem;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.welcome-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-block-start: 26px;
+}
+
+.welcome-chips li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.welcome-chips li:nth-child(1) svg { color: var(--amber-bright); }
+.welcome-chips li:nth-child(2) svg { color: var(--green-bright); }
+.welcome-chips li:nth-child(3) svg { color: var(--blue); }
+
+.welcome-actions {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-hint {
+  margin-block-end: 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-2);
+}
+
+.welcome-apple { min-height: 56px; }
+
+.welcome-guest { margin-block-start: 10px; }
+
+.welcome-privacy {
+  align-self: center;
+  margin-block-start: 14px;
+}
+
+:root[data-motion="off"] .welcome { animation: none !important; }

@@ -34,8 +34,11 @@ export const KEYS_BY_CATEGORY: Record<ConsentCategory, { local: string[]; sessio
   // same reason `fiq_active_quiz` is — without it, a refresh mid-game costs you
   // your seat and your score — and it lives in sessionStorage, so it is gone when
   // the tab is.
-  essential: { local: [], session: ["fiq_active_quiz", "fiq_last_result", "fiq_mp_token"] },
-  preferences: { local: ["fiq_sound_enabled", "fiq_a11y_v1", "fiq_mp_name"], session: [] },
+  // `fiq_account_token` is the signed-in session. Essential while it exists —
+  // without it you are signed out — and it is only ever written by signing in.
+  // `fiq_welcome_seen` keeps the app's first screen from coming back.
+  essential: { local: ["fiq_account_token", "fiq_welcome_seen"], session: ["fiq_active_quiz", "fiq_last_result", "fiq_mp_token"] },
+  preferences: { local: ["fiq_sound_enabled", "fiq_a11y_v1", "fiq_mp_name", "fiq_daily_reminder"], session: [] },
   history: { local: ["fiq_recent_questions", "fiq_mp_stats"], session: [] },
 };
 

@@ -14,6 +14,7 @@ import {
 } from "../../../shared/multiplayer/types";
 import { MESSAGE_COOLDOWN_MS, MESSAGE_MAX_LENGTH } from "../../../shared/multiplayer/constants";
 import { formatRoomCode, roomJoinUrl } from "../../../shared/multiplayer/roomCode";
+import { publicOrigin } from "../../lib/origin";
 import { renderQr } from "../../lib/mp/qr";
 import { motionAllowed } from "../../lib/a11y";
 import { sound } from "../../lib/sound";
@@ -74,7 +75,7 @@ export function QrCode({ url, code, size = 148 }: { url: string; code: string; s
  */
 export function RoomCodePanel({ code, compact = false }: { code: string; compact?: boolean }) {
   const [copied, setCopied] = useState(false);
-  const url = typeof window === "undefined" ? "" : roomJoinUrl(window.location.origin, code);
+  const url = typeof window === "undefined" ? "" : roomJoinUrl(publicOrigin(), code);
   const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   async function copy() {

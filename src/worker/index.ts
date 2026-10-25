@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import type { Env } from "./env";
 import { quizRoutes } from "./routes/quiz";
 import { challengeRoutes } from "./routes/challenges";
@@ -6,6 +7,8 @@ import { dailyRoutes } from "./routes/daily";
 import { attemptRoutes } from "./routes/attempts";
 import { multiplayerRoutes } from "./routes/multiplayer";
 import { healthRoutes } from "./routes/health";
+import { authRoutes } from "./routes/auth";
+import { meRoutes } from "./routes/me";
 import { cspNonce, harden, HASHED_ASSET_PREFIX, securityHeaders } from "./lib/security";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -84,12 +87,36 @@ app.use("/api/*", async (c, next) => {
   }
 });
 
+/**
+ * The native app is the one cross-origin caller.
+ *
+ * Capacitor serves the bundle from capacitor://localhost on iOS and
+ * https://localhost on Android, so every API call from the app is cross-origin
+ * and the JSON POSTs are preflighted. Those two origins, and only those, are
+ * allowed: the web app is same-origin and needs nothing here. No credentials
+ * are involved: the API has no cookies, and the player token travels in the URL.
+ * WebSockets are not subject to CORS and are unaffected. `Authorization` carries
+ * the account session token (src/worker/auth/session.ts).
+ */
+const NATIVE_APP_ORIGINS = ["capacitor://localhost", "https://localhost"];
+app.use(
+  "/api/*",
+  cors({
+    origin: NATIVE_APP_ORIGINS,
+    allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    maxAge: 86400,
+  })
+);
+
 app.route("/api/quiz", quizRoutes);
 app.route("/api/challenges", challengeRoutes);
 app.route("/api/daily", dailyRoutes);
 app.route("/api/attempts", attemptRoutes);
 app.route("/api/mp", multiplayerRoutes);
 app.route("/api/health", healthRoutes);
+app.route("/api/auth", authRoutes);
+app.route("/api/me", meRoutes);
 
 // --------------------------------------------------------------------- failures
 
@@ -270,6 +297,28 @@ async function shell(env: Env, url: URL): Promise<Response> {
     },
   });
 }
+
+/**
+ * Universal links: which paths on this site the iOS app may open instead.
+ *
+ * A room invite, a challenge link and the daily challenge open the app when it
+ * is installed and fall back to this website when it is not. Apple fetches the
+ * file from its CDN, so it is plain JSON with no redirect and no auth.
+ */
+const APPLE_APP_SITE_ASSOCIATION = {
+  applinks: {
+    details: [
+      {
+        appIDs: ["YG2T959QRY.com.royasraf.footballiq"],
+        components: [{ "/": "/room/*" }, { "/": "/challenge/*" }, { "/": "/daily" }],
+      },
+    ],
+  },
+};
+
+app.get("/.well-known/apple-app-site-association", (c) =>
+  c.json(APPLE_APP_SITE_ASSOCIATION, 200, { "Cache-Control": "public, max-age=3600" })
+);
 
 /**
  * Anything that is not an API route is the client's business.

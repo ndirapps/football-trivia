@@ -84,13 +84,16 @@ describe("keysToPurge", () => {
       [...all].sort(),
       [
         "fiq_a11y_v1",
+        "fiq_account_token",
         "fiq_active_quiz",
+        "fiq_daily_reminder",
         "fiq_last_result",
         "fiq_mp_name",
         "fiq_mp_stats",
         "fiq_mp_token",
         "fiq_recent_questions",
         "fiq_sound_enabled",
+        "fiq_welcome_seen",
       ].sort()
     );
   });

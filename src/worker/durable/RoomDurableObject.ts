@@ -30,6 +30,9 @@ import { defaultSettings, PING, PONG } from "../../shared/multiplayer/constants"
 import type { GameResult, MultiplayerMode, RoomSettings } from "../../shared/multiplayer/types";
 import { hydrateQuestions, pickQuestionIds } from "../db/questions";
 import type { Env } from "../env";
+import { ACCOUNT_USER_HEADER } from "../auth/session";
+import { duelOutcome, recordRoomForUserStatement } from "../db/users";
+import { isDuelMode } from "../../shared/multiplayer/constants";
 
 /** What a socket remembers about itself across a hibernation cycle. */
 interface SocketAttachment {
@@ -45,6 +48,8 @@ type StoredState = Omit<RoomState, "questions">;
 
 const STATE_KEY = "state";
 const QUESTIONS_KEY = "questions";
+/** Player token -> account user id, for the players who were signed in. */
+const ACCOUNTS_KEY = "accounts";
 
 export class RoomDurableObject extends DurableObject<Env> {
   /**
@@ -161,13 +166,13 @@ export class RoomDurableObject extends DurableObject<Env> {
       if (request.headers.get("Upgrade") !== "websocket") {
         return new Response("Expected WebSocket upgrade", { status: 426 });
       }
-      return this.openSocket(url);
+      return this.openSocket(url, request);
     }
 
     return new Response("Not found", { status: 404 });
   }
 
-  private async openSocket(url: URL): Promise<Response> {
+  private async openSocket(url: URL, request: Request): Promise<Response> {
     const engine = await this.read();
     const token = url.searchParams.get("t") ?? "";
     const display = url.searchParams.get("display") === "1";
@@ -190,6 +195,17 @@ export class RoomDurableObject extends DurableObject<Env> {
       server.send(JSON.stringify(errorMessage("INVALID_MESSAGE")));
       server.close(1000, "invalid token");
       return new Response(null, { status: 101, webSocket: client });
+    }
+
+    // Set by the Worker from a verified session, never by the client (see
+    // ACCOUNT_USER_HEADER). Remembered per token so full time can credit them.
+    const accountUserId = Number(request.headers.get(ACCOUNT_USER_HEADER));
+    if (!display && Number.isInteger(accountUserId) && accountUserId > 0) {
+      const accounts = (await this.ctx.storage.get<Record<string, number>>(ACCOUNTS_KEY)) ?? {};
+      if (accounts[token] !== accountUserId) {
+        accounts[token] = accountUserId;
+        await this.ctx.storage.put(ACCOUNTS_KEY, accounts);
+      }
     }
 
     const pair = new WebSocketPair();
@@ -573,25 +589,39 @@ export class RoomDurableObject extends DurableObject<Env> {
       const gameId = inserted.meta.last_row_id;
       if (!gameId || game.standings.length === 0) return;
 
-      await this.env.DB.batch(
-        game.standings.map((s) =>
-          this.env.DB.prepare(
-            `INSERT INTO multiplayer_game_players
-               (game_id, player_name, team, score, position, correct_count, wrong_count, best_streak, average_response_time)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-          ).bind(
-            gameId,
-            s.name,
-            s.team,
-            s.score,
-            s.position,
-            s.correctCount,
-            s.wrongCount,
-            s.bestStreak,
-            s.averageResponseMs
-          )
+      // Which standings belong to signed-in players: playerId -> token -> user.
+      const accounts = (await this.ctx.storage.get<Record<string, number>>(ACCOUNTS_KEY)) ?? {};
+      const userIdOf = (playerId: string): number | null => {
+        const token = engine.state.players.find((p) => p.id === playerId)?.token;
+        return token ? accounts[token] ?? null : null;
+      };
+      const duel = isDuelMode(game.mode);
+
+      const statements = game.standings.map((s) =>
+        this.env.DB.prepare(
+          `INSERT INTO multiplayer_game_players
+             (game_id, player_name, team, score, position, correct_count, wrong_count, best_streak, average_response_time, user_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ).bind(
+          gameId,
+          s.name,
+          s.team,
+          s.score,
+          s.position,
+          s.correctCount,
+          s.wrongCount,
+          s.bestStreak,
+          s.averageResponseMs,
+          userIdOf(s.playerId)
         )
       );
+      for (const s of game.standings) {
+        const userId = userIdOf(s.playerId);
+        if (userId !== null) {
+          statements.push(recordRoomForUserStatement(this.env.DB, userId, duelOutcome(game, s.playerId, duel), s.bestStreak));
+        }
+      }
+      await this.env.DB.batch(statements);
     } catch (err) {
       // History is a nice-to-have. A player must never see a game fail to end
       // because a log row could not be written.

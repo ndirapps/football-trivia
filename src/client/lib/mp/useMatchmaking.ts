@@ -14,6 +14,7 @@ import type { ServerMessage } from "../../../shared/multiplayer/protocol";
 import type { MatchmakingState, MultiplayerErrorCode } from "../../../shared/multiplayer/types";
 import { sound } from "../sound";
 import { playerToken } from "./identity";
+import { socketUrl } from "../origin";
 
 export interface MatchmakingSnapshot {
   state: MatchmakingState;
@@ -47,8 +48,7 @@ export function useMatchmaking() {
     if (socketRef.current) return;
     cancelledRef.current = false;
 
-    const scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    const url = `${scheme}://${window.location.host}/api/mp/matchmaking/ws?t=${encodeURIComponent(playerToken())}`;
+    const url = socketUrl(`/api/mp/matchmaking/ws?t=${encodeURIComponent(playerToken())}`);
 
     let socket: WebSocket;
     try {

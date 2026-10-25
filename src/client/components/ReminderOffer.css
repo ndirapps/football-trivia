@@ -1,0 +1,43 @@
+.reminder {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block-start: 18px;
+  padding: 14px;
+  border: 1px solid rgba(246, 185, 59, 0.35);
+  border-radius: var(--r-md);
+  background: var(--amber-wash);
+}
+
+.reminder-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  background: var(--amber);
+  color: var(--on-amber);
+}
+
+.reminder-text { flex: 1; min-width: 150px; }
+
+.reminder-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--amber-bright);
+}
+
+.reminder-sub {
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+
+.reminder-actions { display: flex; gap: 6px; }
+
+.reminder-done {
+  margin-block-start: 18px;
+  text-align: center;
+  color: var(--text-2);
+}

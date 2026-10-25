@@ -31,6 +31,8 @@ export interface RateLimiters {
   RL_QUIZ?: RateLimiter;
   /** Attempt logging: the only unauthenticated D1 write in the product. */
   RL_WRITE?: RateLimiter;
+  /** Sign in with Apple: each call fetches Apple keys and may create a user. */
+  RL_AUTH?: RateLimiter;
 }
 
 export type RateLimiterName = keyof RateLimiters;
@@ -42,4 +44,9 @@ export interface Env extends RateLimiters {
   ROOM: DurableObjectNamespace<RoomDurableObject>;
   /** A single global queue for random duels. */
   MATCHMAKER: DurableObjectNamespace<MatchmakerDurableObject>;
+  /** Sign in with Apple, server side (src/worker/auth/appleClient.ts). */
+  APPLE_TEAM_ID?: string;
+  APPLE_KEY_ID?: string;
+  /** Secret: the .p8 key's PEM. */
+  APPLE_PRIVATE_KEY?: string;
 }
