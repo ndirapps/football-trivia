@@ -18,6 +18,7 @@ import { publicOrigin } from "../../lib/origin";
 import { renderQr } from "../../lib/mp/qr";
 import { motionAllowed } from "../../lib/a11y";
 import { sound } from "../../lib/sound";
+import { isNativeApp } from "../../lib/platform";
 import { Icon } from "../Icon";
 import type { LiveMessage, LiveReaction } from "../../lib/mp/useRoom";
 
@@ -426,7 +427,8 @@ export function MessageComposer({
             ))}
           </div>
 
-          {typing ? (
+          {/* The app sends presets only (see shouldShowMessage in useRoom). */}
+          {isNativeApp() ? null : typing ? (
             <form
               className="mp-talk-custom"
               onSubmit={(event) => {

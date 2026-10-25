@@ -8,6 +8,7 @@ import {
   normalizeRoomCodeInput,
 } from "../src/shared/multiplayer/roomCode.ts";
 import { nameKey, sanitizePlayerName, uniquePlayerName } from "../src/shared/multiplayer/names.ts";
+import { shouldShowMessage } from "../src/client/lib/mp/chatPolicy.ts";
 import { scoreAnswer, scoringSummaryHe, streakBonusEnabled } from "../src/shared/multiplayer/scoring.ts";
 import {
   autoBalance,
@@ -479,5 +480,13 @@ describe("settings patches", () => {
       GREEN: "הצוות",
     });
     assert.equal("teamNames" in parseSettingsPatch({ teamNames: { GREEN: "   " } }), false);
+  });
+});
+
+describe("app chat is presets only", () => {
+  it("shows a preset everywhere, and free text only off the app", () => {
+    assert.equal(shouldShowMessage("VAR בבקשה", true), true);
+    assert.equal(shouldShowMessage("anything typed", true), false);
+    assert.equal(shouldShowMessage("anything typed", false), true);
   });
 });

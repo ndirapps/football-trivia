@@ -28,6 +28,8 @@ import type {
   RoomView,
   RoundReveal,
 } from "../../../shared/multiplayer/types";
+import { shouldShowMessage } from "./chatPolicy";
+import { isNativeApp } from "../platform";
 import {
   HEARTBEAT_INTERVAL_MS,
   HEARTBEAT_TIMEOUT_MS,
@@ -327,6 +329,7 @@ export function useRoom(code: string | undefined, options: UseRoomOptions = {}) 
           return next;
 
         case "PLAYER_MESSAGE": {
+          if (!shouldShowMessage(message.text, isNativeApp())) return previous;
           sound.play("reaction");
           messageKeyRef.current += 1;
           // Only the most recent few are kept: a bubble that has aged out is gone,
