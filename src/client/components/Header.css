@@ -35,6 +35,8 @@
   font-weight: 800;
   font-size: 1.02rem;
   letter-spacing: -0.01em;
+  /* One word mark, one line: on a phone it used to break into "Football / IQ". */
+  white-space: nowrap;
 }
 
 .topbar-link {

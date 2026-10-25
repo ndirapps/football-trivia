@@ -3,9 +3,17 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { isNativeApp } from "./lib/platform";
+import { privacy } from "./lib/privacy";
+
+// In the app the consent bar is website furniture: everything it governs lives
+// in the app's own sandbox on the phone, and the App Store privacy labels and
+// /privacy disclose it. The app records the choice the bar would have offered
+// as its default, once, so nothing downstream has to know about the platform.
+if (isNativeApp() && !privacy.get().decided) privacy.acceptAll();
 import { ScrollToTop } from "./components/ScrollToTop";
 import { RouteAnnouncer } from "./components/RouteAnnouncer";
 import { PrivacyGate } from "./components/PrivacyGate";
+import { WelcomeScreen } from "./components/WelcomeScreen";
 import { FeatureBoundary } from "./components/FeatureBoundary";
 import { HomePage } from "./pages/HomePage";
 import { BuilderPage } from "./pages/BuilderPage";
@@ -138,7 +146,8 @@ export default function App() {
 
       {/* The one that actually did it. */}
       <FeatureBoundary feature="privacy-gate">
-        <PrivacyGate />
+        {!isNativeApp() && <PrivacyGate />}
+        <WelcomeScreen />
       </FeatureBoundary>
     </>
   );

@@ -92,6 +92,7 @@ describe("keysToPurge", () => {
         "fiq_mp_token",
         "fiq_recent_questions",
         "fiq_sound_enabled",
+        "fiq_welcome_seen",
       ].sort()
     );
   });
