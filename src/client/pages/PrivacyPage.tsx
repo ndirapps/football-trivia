@@ -95,6 +95,15 @@ export function PrivacyPage() {
           </p>
         </Clause>
 
+        <Clause title="יצירת קשר ותמיכה">
+          <p>
+            שאלה, תקלה או בקשה לגבי הנתונים שלכם? כתבו לנו:{" "}
+            <a href="mailto:support@nakama-software.com" dir="ltr">
+              support@nakama-software.com
+            </a>
+          </p>
+        </Clause>
+
         <Clause title="השליטה שלכם">
           <p>
             אפשר לשנות קטגוריות או למחוק כל מה שנשמר מקומית. המחיקה מיידית ומלאה — כולל רשומת
