@@ -157,3 +157,5 @@
 }
 
 .profile-delete-confirm:disabled { opacity: 0.7; cursor: progress; }
+
+.profile-privacy { align-self: center; margin-block-start: 12px; }

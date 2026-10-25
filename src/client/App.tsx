@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { isNativeApp } from "./lib/platform";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { RouteAnnouncer } from "./components/RouteAnnouncer";
 import { PrivacyGate } from "./components/PrivacyGate";
@@ -130,7 +131,8 @@ export default function App() {
 
       {!bare && (
         <FeatureBoundary feature="footer">
-          <Footer />
+          {/* Website only. In the app the privacy page is reached from the account sheet and the profile. */}
+          {!isNativeApp() && <Footer />}
         </FeatureBoundary>
       )}
 

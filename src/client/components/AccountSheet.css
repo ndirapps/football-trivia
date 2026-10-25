@@ -104,6 +104,15 @@
   min-height: 44px;
 }
 
+/* Apple requires the privacy policy to be reachable inside an app with accounts. */
+.account-sheet-privacy {
+  margin-block-start: 4px;
+  font-size: 0.85rem;
+  color: var(--text-3);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 :root[data-motion="off"] .account-sheet,
 :root[data-motion="off"] .account-sheet-backdrop {
   animation: none !important;

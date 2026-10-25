@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signInWithApple } from "../lib/account";
 import { messageHeOf } from "../lib/api";
 import { sound } from "../lib/sound";
@@ -91,6 +91,10 @@ export function AccountSheet({ onDismiss }: { onDismiss: () => void }) {
         <button className="btn btn-quiet account-sheet-guest" onClick={onDismiss}>
           המשך כאורח
         </button>
+
+        <Link to="/privacy" className="account-sheet-privacy" onClick={onDismiss}>
+          מדיניות פרטיות
+        </Link>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { accountsAvailable, deleteAccount, refreshAccount, renameAccount, signOut, useAccount } from "../lib/account";
 import { messageHeOf } from "../lib/api";
 import { rememberPlayerName } from "../lib/mp/identity";
@@ -159,6 +159,9 @@ export function ProfilePage() {
         >
           מחיקת החשבון
         </button>
+        <Link to="/privacy" className="account-sheet-privacy profile-privacy">
+          מדיניות פרטיות
+        </Link>
       </div>
 
       {confirmingDelete && (
