@@ -19,7 +19,7 @@
 .a11y-title {
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   margin-bottom: 10px;
 }
 
@@ -37,7 +37,7 @@
 .a11y-switch-row { cursor: pointer; }
 
 .a11y-label {
-  font-size: 0.87rem;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -60,7 +60,7 @@
   border: 0;
   color: var(--text);
   font-family: var(--font-head);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color var(--t-2) var(--ease);
@@ -72,7 +72,7 @@
 .a11y-scale {
   min-width: 42px;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--text-2);
 }

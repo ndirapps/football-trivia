@@ -185,7 +185,7 @@ if (PHASE === "after" || PHASE === "both") {
     await page.locator("h1.home-title").waitFor({ timeout: 25000 });
 
     // Client-side navigation needs no new asset.
-    await page.getByRole("button", { name: "התחל משחק" }).click();
+    await page.getByRole("button", { name: "בנו חידון" }).click();
     await page.waitForURL("**/build", { timeout: 20000 }).catch(() => {});
     check("an open tab can still navigate after a deploy", page.url().includes("/build"), page.url());
 

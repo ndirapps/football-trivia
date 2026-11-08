@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Assistant:wght@400;500;600;700&display=swap");
 @import "./tokens.css";
 @import "./animations.css";
 
@@ -153,7 +152,7 @@ h1, h2, h3, h4,
   color: var(--text);
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 0.97rem;
+  font-size: 1rem;
   line-height: 1.25;
   cursor: pointer;
   overflow: hidden;
@@ -244,13 +243,14 @@ h1, h2, h3, h4,
 
 .btn-lg {
   padding: 16px 30px;
-  font-size: 1.06rem;
+  font-size: 1rem;
   border-radius: var(--r-md);
 }
 
 .btn-sm {
+  min-height: var(--tap);
   padding: 8px 14px;
-  font-size: 0.87rem;
+  font-size: 0.875rem;
   border-radius: var(--r-xs);
 }
 
@@ -286,7 +286,7 @@ h1, h2, h3, h4,
   color: var(--text-2);
   font-family: var(--font-head);
   font-weight: 500;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
@@ -340,7 +340,7 @@ h1, h2, h3, h4,
   color: var(--text-2);
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   white-space: nowrap;
 }
 
@@ -382,7 +382,7 @@ h1, h2, h3, h4,
   color: var(--text);
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1rem;
   transition: border-color var(--t-2) var(--ease), background-color var(--t-2) var(--ease);
 }
 
@@ -443,7 +443,8 @@ h1, h2, h3, h4,
 .pitch-bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  /* Behind everything: at z-index 0 it painted over in-flow cards. */
+  z-index: -1;
   pointer-events: none;
   overflow: hidden;
 }
@@ -514,14 +515,14 @@ h1, h2, h3, h4,
 .boot-recover-title {
   margin: 0;
   font-family: var(--font-head);
-  font-size: 1.22rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--text);
 }
 
 .boot-recover-body {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   line-height: 1.65;
   color: var(--text-2);
 }

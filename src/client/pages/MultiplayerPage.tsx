@@ -94,14 +94,14 @@ export function MultiplayerPage() {
           the room. This screen is now three doors and nothing else. */}
       <section className="mp-home-section">
         <button className="btn btn-primary btn-lg btn-block mp-create" onClick={create} disabled={creating}>
-          {creating ? "פותח חדר…" : "צור חדר"}
+          {creating ? "פותח חדר…" : "פתחו חדר"}
           {!creating && <Icon name="arrow" size={18} />}
         </button>
       </section>
 
       <section className="mp-home-section" aria-labelledby="mp-join-head">
         <h2 id="mp-join-head" className="mp-home-h2">
-          הצטרף עם קוד
+          הצטרפו עם קוד
         </h2>
         <form className="mp-join" onSubmit={join}>
           <label className="sr-only" htmlFor="mp-join-code">
@@ -119,7 +119,7 @@ export function MultiplayerPage() {
             dir="ltr"
           />
           <button className="btn btn-ghost" type="submit" disabled={joining}>
-            {joining ? "בודק…" : "הצטרף"}
+            {joining ? "בודק…" : "הצטרפו"}
           </button>
         </form>
       </section>
@@ -139,7 +139,7 @@ export function MultiplayerPage() {
             <ModeGlyph mode="RANDOM_DUEL" />
           </span>
           <span className="mp-random-text">
-            <span className="mp-random-title">מצא יריב לדו־קרב</span>
+            <span className="mp-random-title">מצאו יריב לדו־קרב</span>
             <span className="mp-random-sub">שחקן אמיתי, בלי קוד ובלי הזמנות</span>
           </span>
           <Icon name="arrow" size={18} />

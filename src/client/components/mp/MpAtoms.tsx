@@ -111,7 +111,7 @@ export function RoomCodePanel({ code, compact = false }: { code: string; compact
           <div className="mp-code-actions">
             <button className="btn btn-ghost btn-sm" onClick={copy}>
               <Icon name={copied ? "check" : "share"} size={15} />
-              {copied ? "הועתק" : "העתק קישור"}
+              {copied ? "הועתק" : "העתיקו קישור"}
             </button>
             {canShare && (
               <button className="btn btn-ghost btn-sm" onClick={share}>

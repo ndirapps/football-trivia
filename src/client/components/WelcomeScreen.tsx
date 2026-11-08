@@ -115,7 +115,7 @@ export function WelcomeScreen() {
           }}
           disabled={busy}
         >
-          המשך כאורח
+          המשיכו כאורח
         </button>
         <Link to="/privacy" className="account-sheet-privacy welcome-privacy">
           מדיניות פרטיות

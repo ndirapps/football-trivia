@@ -6,13 +6,16 @@
   padding-block: 18px 40px;
 }
 
-/* The question sits in the middle of the screen, answers under it. */
+/* The question sits at a fixed height near the top, answers under it.
+   Top-aligned on purpose: centring it made the question and options jump up
+   every time the explanation appeared. */
 .sheet {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 18px;
+  padding-block-start: clamp(4px, 3vh, 28px);
 }
 
 .q {
@@ -41,7 +44,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   line-height: 1.5;
   color: var(--text-2);
   animation: fade-up 320ms var(--ease) both;
@@ -106,11 +109,15 @@
     box-shadow var(--t-2) var(--ease);
 }
 
-.opt:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: var(--green);
-  background: var(--surface-2);
-  box-shadow: var(--shadow-2);
+/* Real hover only: on touch, iOS keeps :hover on the tapped option, which
+   painted a green "correct" border on a choice before its reveal. */
+@media (hover: hover) {
+  .opt:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--green);
+    background: var(--surface-2);
+    box-shadow: var(--shadow-2);
+  }
 }
 
 .opt:active:not(:disabled) {
@@ -131,11 +138,11 @@
   color: var(--text-3);
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   transition: background-color var(--t-2) var(--ease), color var(--t-2) var(--ease);
 }
 
-.opt:hover:not(:disabled) .opt-key { color: var(--text); }
+@media (hover: hover) { .opt:hover:not(:disabled) .opt-key { color: var(--text); } }
 
 .opt-text { min-width: 0; line-height: 1.4; }
 
@@ -161,13 +168,13 @@
 .opt.is-wrong .opt-mark { color: var(--red); }
 
 /* Eliminated options recede but stay readable — you learn from a miss. */
-.opt.is-out { opacity: 0.4; border-color: var(--line); background: transparent; }
+.opt.is-out { opacity: 0.58; border-color: var(--line); background: transparent; }
 
 /* The net ripple, centred on the struck option. */
 .net {
   position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
+  top: 50%;
+  left: 50%;
   width: 130%;
   aspect-ratio: 1;
   translate: -50% -50%;
@@ -185,7 +192,7 @@
   border-radius: var(--r-sm);
   background: var(--surface);
   border-inline-start: 3px solid var(--green);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   line-height: 1.6;
   color: var(--text-2);
 }
@@ -195,13 +202,14 @@
    ============================================================ */
 .quiz-next {
   position: sticky;
-  inset-block-end: 12px;
+  /* Clear the home indicator on Face ID iPhones (the shell is viewport-fit=cover). */
+  inset-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
   z-index: 20;
 }
 
 .quiz-tip {
   text-align: center;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   color: var(--text-3);
 }
 

@@ -680,7 +680,7 @@ async function testTrashTalkInBrowsers(browser) {
   const code = await createRoom(host.page, "CLASSIC_BATTLE");
   for (const player of players) await join(player, code);
 
-  await host.page.click("button:has-text('התחל משחק')");
+  await host.page.click("button:has-text('התחילו משחק')");
   await waitForPhase(host.page, ["QUESTION", "COUNTDOWN"]);
   await waitForPhase(opponent.page, ["QUESTION", "COUNTDOWN"]);
   await waitForPhase(third.page, ["QUESTION"]);
@@ -773,7 +773,7 @@ async function testDuelTrashTalkInBrowsers(browser) {
   await join(host, code);
   await join(rival, code);
 
-  await host.page.click("button:has-text('התחל משחק')");
+  await host.page.click("button:has-text('התחילו משחק')");
   await waitForPhase(rival.page, ["QUESTION", "COUNTDOWN", "DUEL_INTRO"]);
 
   await host.page.click(".mp-talk-toggle");

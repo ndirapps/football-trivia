@@ -101,9 +101,9 @@ async function run() {
     const modeNamesOnEntry = hostModes.filter((m) => body.includes(m.labelHe));
     check(modeNamesOnEntry.length === 0, "none of the five modes is named", modeNamesOnEntry.map((m) => m.labelHe).join(", "));
 
-    check(body.includes("צור חדר"), "צור חדר is offered");
-    check(body.includes("הצטרף עם קוד"), "הצטרף עם קוד is offered");
-    check(body.includes("מצא יריב לדו־קרב"), "מצא יריב לדו־קרב is offered");
+    check(body.includes("פתחו חדר"), "פתחו חדר is offered");
+    check(body.includes("הצטרפו עם קוד"), "הצטרפו עם קוד is offered");
+    check(body.includes("מצאו יריב לדו־קרב"), "מצאו יריב לדו־קרב is offered");
     check(body.includes("אין עם מי לשחק?"), "with the 'nobody to play with' framing");
 
     // ---------------------------------------------------------------- B
@@ -207,7 +207,7 @@ async function run() {
     await host.page.waitForSelector(".home-ctas");
     const homeCtas = await host.page.$$eval(".home-ctas button", (els) => els.map((e) => e.textContent.trim()));
     check(homeCtas.some((t) => t.includes("משחק עם חברים")), "multiplayer is still on the homepage", homeCtas.join(" | "));
-    check(homeCtas.some((t) => t.includes("מצא יריב לדו־קרב")), "and so is the duel search");
+    check(homeCtas.some((t) => t.includes("מצאו יריב לדו־קרב")), "and so is the duel search");
 
     // ---------------------------------------------------------------- G
     section("G — terminology, across the surfaces a player sees");

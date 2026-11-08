@@ -12,14 +12,14 @@
 }
 
 .hud-pos {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
 .hud-pos b {
   color: var(--text);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
 }
 
 .hud-streak {
@@ -31,7 +31,7 @@
   background: var(--amber-wash);
   color: var(--amber);
   font-weight: 800;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 
 .hud-score {
@@ -41,14 +41,14 @@
 }
 
 .hud-score-value {
-  font-size: 1.28rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--text);
   display: inline-block;
 }
 
 .hud-score-label {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-3);
   font-weight: 600;
 }

@@ -100,7 +100,7 @@ async function home(browser) {
   check("the title asks the brand question", title.includes("Football IQ"), title);
 
   check("the document is right-to-left", (await page.evaluate(() => document.documentElement.dir)) === "rtl");
-  check("the primary call to action is present", (await page.getByRole("button", { name: "התחל משחק" }).count()) === 1);
+  check("the primary call to action is present", (await page.getByRole("button", { name: "בנו חידון" }).count()) === 1);
   check("quick-start presets render", (await page.locator(".quick-btn").count()) >= 4);
   check("both multiplayer entries are on the surface", (await page.locator(".home-cta-mp").count()) === 2);
 
@@ -221,8 +221,13 @@ async function freeText(browser) {
     check("this question offers no hint (skipped)", true);
   }
 
-  // A deliberately wrong answer must be marked wrong and must say so.
+  // A first wrong answer earns a second try, said plainly; the second miss ends it.
   await page.locator(".ft input").fill("בהחלט לא התשובה הנכונה");
+  await page.keyboard.press("Enter");
+  await page.locator(".ft-retry").waitFor({ timeout: 15000 });
+  check("a first miss offers one more try", (await page.locator(".ft-retry").count()) === 1);
+  check("and the question is not resolved yet", (await page.locator(".ft-out").count()) === 0);
+  await page.locator(".ft input").fill("עדיין לא התשובה הנכונה");
   await page.keyboard.press("Enter");
   await page.locator(".ft-out").waitFor({ timeout: 15000 });
   check("a wrong typed answer is marked wrong", (await page.locator(".ft-out.is-wrong").count()) === 1);
@@ -266,7 +271,7 @@ async function daily(browser) {
   check("the daily gate renders", (await page.locator(".plate").count()) === 1);
   check("it names a date or a round", (await page.locator(".plate").innerText()).trim().length > 5);
 
-  const start = page.getByRole("button", { name: "התחל" });
+  const start = page.getByRole("button", { name: "התחילו" });
   check("the daily challenge can be started", (await start.count()) === 1);
   if (await start.count()) {
     await start.first().click();
@@ -279,7 +284,7 @@ async function daily(browser) {
   const first = await page.locator(".q").innerText();
   const second = await newPlayer(browser);
   await second.page.goto(`${BASE}/daily`, { waitUntil: "networkidle" });
-  await second.page.getByRole("button", { name: "התחל" }).first().click();
+  await second.page.getByRole("button", { name: "התחילו" }).first().click();
   await second.page.waitForURL("**/play", { timeout: 25000 });
   await second.page.locator(".q").waitFor({ timeout: 25000 });
   check(

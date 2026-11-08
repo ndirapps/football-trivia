@@ -43,6 +43,8 @@ export interface ActiveQuizSession {
   startedAt: number;
   challengePublicId?: string;
   isDaily?: boolean;
+  /** The daily challenge's date (YYYY-MM-DD), when isDaily. */
+  dailyDate?: string;
 }
 
 export interface QuizResultSession {

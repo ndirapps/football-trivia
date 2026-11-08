@@ -74,6 +74,8 @@
     "@capacitor/share": "^8.0.3",
     "@capacitor/splash-screen": "^8.0.2",
     "@capacitor/status-bar": "^8.0.4",
+    "@fontsource-variable/assistant": "^5.2.8",
+    "@fontsource-variable/rubik": "^5.2.8",
     "hono": "^4.13.11",
     "qrcode-generator": "^2.0.4",
     "react": "^19.3.0",

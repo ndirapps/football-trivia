@@ -44,7 +44,7 @@
 .mp-gate-label {
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
 }
 
 .mp-gate-hint { color: var(--text-3); }
@@ -63,7 +63,7 @@
 .mp-gate-title {
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .mp-gate-body { color: var(--text-2); }
@@ -79,9 +79,9 @@
 }
 
 .mp-lobby-h2 {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0; /* tracking breaks Hebrew word shapes */
   color: var(--text-3);
 }
 
@@ -116,7 +116,7 @@
   background: var(--surface);
 }
 
-.mp-lobby-facts b { font-family: var(--font-head); font-size: 1.02rem; }
+.mp-lobby-facts b { font-family: var(--font-head); font-size: 1rem; }
 
 .mp-lobby-actions {
   display: flex;
@@ -126,6 +126,17 @@
 }
 
 .mp-lobby-actions > .btn-block { width: 100%; }
+
+/* The host's lobby runs long (team sheet + five settings groups): keep Start in
+   reach at the bottom instead of 1,600px down the page. */
+.mp-lobby-actions.is-sticky {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 20;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: 14px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, var(--bg) 70%, color-mix(in oklab, var(--bg) 0%, transparent));
+}
 
 .mp-lobby-wait {
   display: inline-flex;
@@ -155,7 +166,7 @@
   margin-block-start: 12px;
 }
 
-.mp-stage-label { letter-spacing: 0.18em; }
+.mp-stage-label { letter-spacing: 0; }
 
 .mp-hud {
   display: flex;
@@ -182,7 +193,7 @@
   color: var(--text-2);
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 0.86rem;
+  font-size: 0.875rem;
   text-align: center;
 }
 

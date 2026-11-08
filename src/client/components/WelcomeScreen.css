@@ -57,7 +57,7 @@
 
 .welcome-sub {
   margin-block-start: 12px;
-  font-size: 1.12rem;
+  font-size: 1.125rem;
   line-height: 1.45;
   color: var(--text-2);
 }
@@ -81,7 +81,7 @@
   background: var(--surface);
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
 }
 
 .welcome-chips li:nth-child(1) svg { color: var(--amber-bright); }
@@ -97,7 +97,7 @@
 .welcome-hint {
   margin-block-end: 12px;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   color: var(--text-2);
 }
 

@@ -138,7 +138,7 @@ export function BuilderPage() {
   return (
     <div className="page bld">
       <h1 className="bld-title" ref={headingRef} tabIndex={-1}>
-        צור משחק
+        בנו חידון
       </h1>
 
       <Row label="איך עונים?">
@@ -231,7 +231,7 @@ export function BuilderPage() {
             </p>
           )}
           <button className="btn btn-primary btn-block" disabled={starting || !canStart} onClick={start}>
-            {starting ? "יוצר…" : "התחל משחק"}
+            {starting ? "יוצר…" : "התחילו משחק"}
             {!starting && <Icon name="arrow" size={17} />}
           </button>
           <p className="bld-avail" role="status" aria-live="polite">

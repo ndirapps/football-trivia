@@ -1594,7 +1594,7 @@ function generatePlayerPositions(): GeneratedQuestion[] {
     });
     if (!resolved.broad) continue;
 
-    const nationalityHint = [`השחקן הוא ${NATIONALITIES[player.nat]?.he ?? ""}`.trim()].filter(Boolean);
+    const nationalityHint = [(NATIONALITIES[player.nat]?.he ? `השחקן מ${NATIONALITIES[player.nat]!.he}` : "").trim()].filter(Boolean);
 
     // ---- the unit. Four options, fixed rather than sampled: there are only four.
     const broadWrong = BROAD_POSITIONS.filter((p) => p !== resolved.broad);

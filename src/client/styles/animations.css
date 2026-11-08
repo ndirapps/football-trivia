@@ -133,11 +133,11 @@
    Shout badges — GOAL!, מהיר!, streak calls
    ============================================================ */
 @keyframes shout {
-  0%   { opacity: 0; transform: translate(-50%, 8px) scale(0.6) rotate(-6deg); }
-  22%  { opacity: 1; transform: translate(-50%, 0) scale(1.12) rotate(2deg); }
-  38%  { transform: translate(-50%, 0) scale(1) rotate(0deg); }
-  80%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -18px) scale(0.95); }
+  0%   { opacity: 0; transform: translateY(8px) scale(0.6) rotate(-6deg); }
+  22%  { opacity: 1; transform: translateY(0) scale(1.12) rotate(2deg); }
+  38%  { transform: translateY(0) scale(1) rotate(0deg); }
+  80%  { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-18px) scale(0.95); }
 }
 
 .a-shout { animation: shout 1100ms var(--ease) both; }
