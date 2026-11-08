@@ -275,11 +275,31 @@ export function fetchQuiz(config: QuizConfiguration): Promise<Quiz> {
   });
 }
 
+/*
+ * Availability answers, remembered for the visit. The builder re-asks the same
+ * questions as a player taps back and forth, and each server-side miss is a
+ * counting query over thousands of D1 rows — reads the free tier rations daily.
+ * Only successes are kept; a failure is asked again next time.
+ */
+const AVAILABILITY_TTL_MS = 10 * 60 * 1000;
+const availabilityMemo = new Map<string, { at: number; value: Promise<unknown> }>();
+
+function remembered<T>(key: string, load: () => Promise<T>): Promise<T> {
+  const hit = availabilityMemo.get(key);
+  if (hit && Date.now() - hit.at < AVAILABILITY_TTL_MS) return hit.value as Promise<T>;
+  const value = load();
+  availabilityMemo.set(key, { at: Date.now(), value });
+  value.catch(() => availabilityMemo.delete(key));
+  return value;
+}
+
 export function fetchAvailableCount(config: QuizConfiguration): Promise<{ availableCount: number }> {
   // Cached server-side and called on every filter change, so it stays on the
   // short timeout and is not retried: a stale availability figure is a cosmetic
   // problem, and the builder already renders "לא הצלחנו לבדוק" for it.
-  return request("/api/quiz/count", { method: "POST", body: config });
+  return remembered(`count:${JSON.stringify(config)}`, () =>
+    request<{ availableCount: number }>("/api/quiz/count", { method: "POST", body: config })
+  );
 }
 
 export interface AvailabilityResponse {
@@ -309,10 +329,10 @@ export function fetchAvailability(
   dimensions: string[],
   options: { anyMode?: boolean } = {}
 ): Promise<AvailabilityResponse> {
-  return request("/api/quiz/options", {
-    method: "POST",
-    body: { ...config, gameMode: options.anyMode ? null : config.gameMode, dimensions },
-  });
+  const body = { ...config, gameMode: options.anyMode ? null : config.gameMode, dimensions };
+  return remembered(`options:${JSON.stringify(body)}`, () =>
+    request<AvailabilityResponse>("/api/quiz/options", { method: "POST", body })
+  );
 }
 
 export function fetchDaily(): Promise<{ date: string; quiz: Quiz }> {
