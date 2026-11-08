@@ -84,7 +84,7 @@ const FLOWS = [
     taps: [],
     expect: {
       questionType: "MIXED",
-      answerMode: "FREE_TEXT",
+      answerMode: "MULTIPLE_CHOICE",
       difficulty: "MIXED",
       questionCount: 10,
       region: "WORLD",
@@ -307,6 +307,25 @@ async function runFlow(page, flow, viewport, isMobile) {
     record(actionUp, `FLOW ${flow.id} start visible on open @ ${viewport}`, actionUp ? "in view" : "below the fold");
 
     if (flow.id === "A") {
+      // A real tap lands on the pill under the finger. The flows above click
+      // through the DOM, which skips hit-testing, so an overlay swallowing every
+      // tap (a stray ::after hit area did exactly that above 420px) passed them.
+      const blocked = await page.evaluate(() =>
+        [...document.querySelectorAll(".bld-pill, .bld-action")]
+          .filter((el) => {
+            const r = el.getBoundingClientRect();
+            if (!r.width || r.bottom > innerHeight) return false;
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            return !(hit === el || el.contains(hit));
+          })
+          .map((el) => el.textContent.trim())
+      );
+      record(
+        blocked.length === 0,
+        `every visible option takes a real tap @ ${viewport}`,
+        blocked.length === 0 ? "nothing covers the pills" : `covered: ${blocked.slice(0, 5).join(", ")}`
+      );
+
       // The five rows, present and populated the moment the screen opens.
       const labels = Object.keys(rows);
       const wanted = ["איך עונים?", "קושי", "שאלות", "סוג", "מאיפה?"];

@@ -137,6 +137,9 @@
   borrowing the selected style would say the opposite of what it does.
 */
 .bld-action {
+  /* Anchors the 44px hit area below. Without it the ::after spread over the
+     whole builder on screens wider than 420px and swallowed every tap. */
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
