@@ -131,7 +131,7 @@ export function DuelSearchPage() {
           <span className="mp-duel-intro-glyph" aria-hidden="true">
             <ModeGlyph mode="RANDOM_DUEL" />
           </span>
-          <h1 className="mp-duel-intro-title">דו קרב אקראי</h1>
+          <h1 className="mp-duel-intro-title">דו־קרב אקראי</h1>
           <p className="mp-duel-intro-sub">
             עשר שאלות, אותן שאלות לשניכם, אותו סדר. בלי קוד ובלי הזמנות.
           </p>

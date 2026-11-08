@@ -85,7 +85,7 @@
   color: #000000;
   font-family: -apple-system, "SF Pro Text", var(--font-head);
   font-weight: 600;
-  font-size: 1.08rem;
+  font-size: 1.125rem;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform var(--t-1) var(--ease), opacity var(--t-2) var(--ease);
@@ -107,7 +107,7 @@
 /* Apple requires the privacy policy to be reachable inside an app with accounts. */
 .account-sheet-privacy {
   margin-block-start: 4px;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-3);
   text-decoration: underline;
   text-underline-offset: 3px;

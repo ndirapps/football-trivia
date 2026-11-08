@@ -74,15 +74,17 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  /* ~38px tall with this padding, which keeps a comfortable target while
-     fitting five rows and the dock on the shortest supported phone. */
-  padding: 7px 12px;
+  /* 36px to look at, 44px to tap: the ::after below widens the hit area into
+     the 8px gap, so all five rows still fit above the dock on a phone. */
+  position: relative;
+  min-height: 36px;
+  padding: 6px 13px;
   border: 1.5px solid var(--line-strong);
   border-radius: 999px;
   background: var(--surface);
   color: var(--text-2);
   font: inherit;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.1;
   cursor: pointer;
@@ -144,7 +146,7 @@
   background: color-mix(in srgb, var(--text-3) 12%, transparent);
   color: var(--text);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 700;
   line-height: 1.1;
   cursor: pointer;
@@ -208,13 +210,13 @@
 .bld-avail {
   margin: 0;
   text-align: center;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   color: var(--text-3);
 }
 
 .bld-error {
   margin: 0 0 2px;
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   color: var(--red, #e5534b);
   text-align: center;
 }
@@ -274,7 +276,7 @@
 /* How far in, and what was picked on the way. */
 .bld-sheet-crumb {
   margin: 1px 0 0;
-  font-size: 0.73rem;
+  font-size: 0.75rem;
   color: var(--text-3);
   white-space: nowrap;
   overflow: hidden;
@@ -320,7 +322,7 @@
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   text-align: start;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -338,14 +340,14 @@
 }
 
 .bld-sheet-count {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
 }
 
 .bld-sheet-empty {
   margin: 10px 8px;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-3);
   line-height: 1.5;
   text-align: center;
@@ -354,13 +356,13 @@
 /* ------------------------------------------------------------------- phones */
 @media (max-width: 420px) {
   .bld { gap: 8px; padding-block: 10px 0; }
-  .bld-title { font-size: 1.15rem; }
+  .bld-title { font-size: 1.125rem; }
   .bld-row { gap: 4px; }
-  .bld-row-label { font-size: 0.72rem; }
-  .bld-pill { padding: 6px 10px; font-size: 0.83rem; }
-  .bld-action { padding: 6px 10px; font-size: 0.81rem; gap: 5px; }
-  .bld-pill.is-narrow { min-width: 44px; }
-  .bld-pills { gap: 4px; }
+  .bld-row-label { font-size: 0.8125rem; }
+  .bld-pill { padding: 5px 12px; font-size: 0.875rem; }
+  .bld-action { position: relative; min-height: 36px; padding: 5px 12px; font-size: 0.875rem; gap: 5px; }
+  .bld-pill.is-narrow { min-width: var(--tap); }
+  .bld-pills { gap: 8px; }
 }
 
 /* ------------------------------------------------------------------ desktop */
@@ -375,8 +377,8 @@
     gap: 18px;
   }
 
-  .bld-pill { padding: 10px 15px; font-size: 0.92rem; }
-  .bld-action { padding: 10px 15px; font-size: 0.9rem; }
+  .bld-pill { padding: 10px 15px; font-size: 0.9375rem; }
+  .bld-action { padding: 10px 15px; font-size: 0.875rem; }
 
   .bld-dock {
     position: static;
@@ -395,4 +397,15 @@
     border-radius: var(--r-lg);
     border-block-end: 1px solid var(--line);
   }
+}
+
+/* Focus lands here programmatically on arrival; no ring for that. */
+.bld-title:focus { outline: none; }
+
+/* The tappable area of a pill or row action is a full 44px. */
+.bld-pill::after,
+.bld-action::after {
+  content: "";
+  position: absolute;
+  inset: min(0px, calc((100% - var(--tap)) / 2));
 }

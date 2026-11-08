@@ -18,7 +18,7 @@
 }
 
 .pv-bar-text {
-  font-size: 0.83rem;
+  font-size: 0.8125rem;
   line-height: 1.5;
   color: var(--text-2);
   max-width: 60ch;
@@ -78,7 +78,7 @@
 }
 
 .pv-panel-title {
-  font-size: 1.15rem;
+  font-size: 1.125rem;
   font-weight: 700;
 }
 
@@ -105,17 +105,17 @@
   gap: 8px;
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 0.93rem;
+  font-size: 0.9375rem;
 }
 
 .pv-row-note {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   line-height: 1.45;
   color: var(--text-3);
 }
 
 .pv-note {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-3);
   padding-block: 12px;
   border-block-start: 1px solid var(--line);
@@ -130,7 +130,7 @@
 }
 
 .pv-wiped {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--green);
   min-height: 1.2em;

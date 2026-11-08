@@ -11,7 +11,7 @@ const TITLES: Record<string, string> = {
   "/results": "תוצאות",
   "/daily": "אתגר יומי",
   "/multiplayer": "משחק עם חברים",
-  "/multiplayer/duel": "דו קרב אקראי",
+  "/multiplayer/duel": "דו־קרב אקראי",
   "/privacy": "מדיניות פרטיות",
 };
 

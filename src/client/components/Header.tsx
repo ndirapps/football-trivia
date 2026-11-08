@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState, type MouseEvent } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { countMount, countRender } from "../lib/liveness";
 import { BallMark } from "./BallMark";
 import { SoundToggle } from "./SoundToggle";
@@ -7,6 +7,7 @@ import { A11yMenu } from "./A11yMenu";
 import { AccountButton } from "./AccountButton";
 import { isNativeApp } from "../lib/platform";
 import { Icon } from "./Icon";
+import { LeaveSheet } from "./LeaveSheet";
 import "./Header.css";
 
 /**
@@ -22,11 +23,21 @@ export function Header() {
   // A multiplayer room counts too: walking out of a live room costs other people
   // their game, so the links out are not on offer while one is open.
   const playing = pathname === "/play" || pathname.startsWith("/room/");
+  const inRoom = pathname.startsWith("/room/");
+  const navigate = useNavigate();
+  const [confirmLeave, setConfirmLeave] = useState(false);
+
+  // Mid-game the logo still goes home, but only after a confirm.
+  function onMark(event: MouseEvent<HTMLAnchorElement>) {
+    if (!playing) return;
+    event.preventDefault();
+    setConfirmLeave(true);
+  }
 
   return (
     <header className="topbar">
       <div className="page-wide page topbar-inner">
-        <Link to="/" className="mark" aria-label="Football IQ — לעמוד הבית">
+        <Link to="/" className="mark" aria-label="Football IQ — לעמוד הבית" onClick={onMark}>
           <BallMark size={26} />
           <span className="mark-text">
             Football <span className="green">IQ</span>
@@ -41,11 +52,17 @@ export function Header() {
               the thing worth coming back for, and it is the only one here now so
               it can actually be seen. */}
           {!playing && (
-            <Link to="/daily" className="topbar-daily" aria-label="האתגר היומי — שאלה חדשה כל יום">
+            <Link to="/daily" className="topbar-daily" aria-label="האתגר היומי — 10 שאלות חדשות כל יום">
               <Icon name="trophy" size={16} />
               <span>האתגר היומי</span>
               <span className="topbar-daily-dot" aria-hidden="true" />
             </Link>
+          )}
+          {playing && (
+            <button type="button" className="topbar-leave" onClick={() => setConfirmLeave(true)}>
+              <Icon name="cross" size={14} />
+              <span>יציאה</span>
+            </button>
           )}
           <SoundToggle />
           {/* Website only: the app relies on the phone's own accessibility settings. */}
@@ -53,6 +70,16 @@ export function Header() {
           {!playing && <AccountButton />}
         </div>
       </div>
+      {confirmLeave && (
+        <LeaveSheet
+          inRoom={inRoom}
+          onStay={() => setConfirmLeave(false)}
+          onLeave={() => {
+            setConfirmLeave(false);
+            navigate("/");
+          }}
+        />
+      )}
     </header>
   );
 }

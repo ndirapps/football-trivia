@@ -51,7 +51,7 @@ check(
   (await page.locator("h1.home-title").innerText()).includes("Football IQ")
 );
 check("page direction is RTL", (await page.evaluate(() => document.documentElement.dir)) === "rtl");
-check("primary CTA is present", (await page.getByRole("button", { name: "התחל משחק" }).count()) === 1);
+check("primary CTA is present", (await page.getByRole("button", { name: "בנו חידון" }).count()) === 1);
 check("quick game cards render", (await page.locator(".quick-card").count()) === 6);
 check("how-it-works section renders 3 steps", (await page.locator(".how-step").count()) === 3);
 

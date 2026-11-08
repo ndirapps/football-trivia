@@ -26,6 +26,9 @@
 // specificity with a global one (`.stamp` vs `.fixture-tag`, say) silently lost
 // to the global. Base first, components after, is the order everything else
 // here assumes.
+// Fonts ship inside the bundle: the app must render the same with no network.
+import "@fontsource-variable/rubik/wght.css";
+import "@fontsource-variable/assistant/wght.css";
 import "./styles/global.css";
 
 import React from "react";

@@ -9,7 +9,23 @@ import { sound } from "../lib/sound";
 import { motionAllowed } from "../lib/a11y";
 import { Icon } from "../components/Icon";
 import { BallMark } from "../components/BallMark";
+import { safeLocal } from "../lib/safeStorage";
+import { privacy } from "../lib/privacy";
 import "./HomePage.css";
+
+/** The answer mode the player last picked, so a quick tile can start in one tap. */
+const MODE_KEY = "fiq_answer_mode";
+// Kept in memory too, so it holds for the visit even without storage consent.
+let modeThisVisit: AnswerMode | null = null;
+function loadMode(): AnswerMode | null {
+  if (modeThisVisit) return modeThisVisit;
+  const v = privacy.allows("preferences") ? safeLocal.get(MODE_KEY) : null;
+  return v === "FREE_TEXT" || v === "MULTIPLE_CHOICE" ? v : null;
+}
+function saveMode(mode: AnswerMode) {
+  modeThisVisit = mode;
+  if (privacy.allows("preferences")) safeLocal.set(MODE_KEY, mode);
+}
 
 /**
  * One screen, one decision: start.
@@ -37,10 +53,19 @@ export function HomePage() {
    * No builder, no modal to dismiss, nothing to confirm.
    */
   const [pending, setPending] = useState<QuickPreset | null>(null);
+  // Asked once, then remembered and shown as a switch above the tiles.
+  const [mode, setMode] = useState<AnswerMode | null>(loadMode);
+  const [lastTry, setLastTry] = useState<{ preset: QuickPreset; mode: AnswerMode } | null>(null);
+
+  function pickMode(next: AnswerMode) {
+    setMode(next);
+    saveMode(next);
+  }
 
   async function start(preset: QuickPreset, answerMode: AnswerMode) {
     setError(null);
     setPending(null);
+    setLastTry({ preset, mode: answerMode });
     setLoadingKey(preset.key);
     sound.play("select");
     try {
@@ -68,12 +93,13 @@ export function HomePage() {
       <div className="home-ctas a-fade-up" style={{ animationDelay: "140ms" }}>
         <button
           className="btn btn-primary btn-lg home-cta"
+          disabled={loadingKey !== null}
           onClick={() => {
             sound.play("click");
             navigate("/build");
           }}
         >
-          התחל משחק
+          בנו חידון
           <Icon name="arrow" size={19} />
         </button>
 
@@ -106,9 +132,36 @@ export function HomePage() {
           }}
         >
           <Icon name="target" size={18} />
-          מצא יריב לדו־קרב
+          מצאו יריב לדו־קרב
         </button>
       </div>
+
+      {mode && (
+        <div className="quick-mode" role="radiogroup" aria-label="איך עונים בהתחלה מהירה">
+          <span className="quick-mode-label">עונים:</span>
+          {(
+            [
+              ["FREE_TEXT", "בהקלדה", "keyboard"],
+              ["MULTIPLE_CHOICE", "אמריקאי", "list"],
+            ] as const
+          ).map(([value, label, icon]) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={mode === value}
+              className={`quick-mode-opt ${mode === value ? "is-on" : ""}`}
+              onClick={() => {
+                sound.play("click");
+                pickMode(value);
+              }}
+            >
+              <Icon name={icon} size={15} />
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="quick a-stagger" role="group" aria-label="התחלה מהירה">
         {QUICK_PRESETS.map((preset, i) => (
@@ -118,10 +171,11 @@ export function HomePage() {
             style={{ "--i": i + 3 } as React.CSSProperties}
             disabled={loadingKey !== null}
             aria-busy={loadingKey === preset.key}
-            aria-haspopup="dialog"
+            aria-haspopup={mode ? undefined : "dialog"}
             onClick={() => {
               sound.play("click");
-              setPending(preset);
+              if (mode) void start(preset, mode);
+              else setPending(preset);
             }}
           >
             <Icon name={preset.icon} size={17} />
@@ -133,15 +187,24 @@ export function HomePage() {
       {pending && (
         <AnswerModeSheet
           preset={pending}
-          onPick={(mode) => start(pending, mode)}
+          onPick={(picked) => {
+            pickMode(picked);
+            void start(pending, picked);
+          }}
           onDismiss={() => setPending(null)}
         />
       )}
 
       {error && (
-        <p className="home-error a-pop" role="alert">
-          {error}
-        </p>
+        <div className="home-error a-pop" role="alert">
+          <p>{error}</p>
+          {lastTry && (
+            <button className="btn btn-ghost btn-sm" onClick={() => start(lastTry.preset, lastTry.mode)}>
+              <Icon name="replay" size={15} />
+              נסו שוב
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

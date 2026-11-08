@@ -90,7 +90,7 @@
   transform: translateY(66px);
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
   letter-spacing: 0.04em;
   color: var(--text-2);
   animation: fade-up 400ms var(--ease) 260ms both;

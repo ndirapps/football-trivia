@@ -1,7 +1,13 @@
 .shout {
   position: fixed;
   inset-block-start: 22vh;
-  inset-inline-start: 50%;
+  /* Centred with auto margins, not inset-inline-start + translate: in RTL that
+     resolves to right:50% and pushes the badge off-screen. */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
+  max-width: calc(100vw - 32px);
   z-index: 80;
   padding: 9px 22px;
   border-radius: var(--r-pill);

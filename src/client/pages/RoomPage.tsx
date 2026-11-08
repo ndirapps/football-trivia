@@ -402,6 +402,8 @@ export function RoomPage() {
           <div className="mp-social">
             <ReactionBar onSend={(emoji) => send({ type: "SEND_REACTION", emoji })} />
             <MessageComposer
+              // Not while you still have to answer: the panel opens over the options.
+              disabled={phase === "QUESTION" && myTurn && !submitted}
               onSend={({ presetId, text }) =>
                 send({ type: "SEND_MESSAGE", presetId: presetId ?? null, text: text ?? null })
               }
@@ -527,7 +529,7 @@ function Lobby({
       ) : (
         <section className="mp-lobby-config" aria-labelledby="mp-waiting-head">
           <h2 id="mp-waiting-head" className="mp-lobby-h2">
-            {matchmade ? "דו קרב אקראי" : "מחכים למארח"}
+            {matchmade ? "דו־קרב אקראי" : "מחכים למארח"}
           </h2>
           <ul className="mp-lobby-facts">
             <li>
@@ -550,10 +552,10 @@ function Lobby({
         </section>
       )}
 
-      <div className="mp-lobby-actions">
+      <div className={`mp-lobby-actions ${isHost && !matchmade ? "is-sticky" : ""}`}>
         {isHost && !matchmade && (
           <button className="btn btn-primary btn-lg btn-block" onClick={onStart} disabled={!canStart}>
-            {canStart ? "התחל משחק" : `צריך ${meta.minPlayers} שחקנים`}
+            {canStart ? "התחילו משחק" : `צריך ${meta.minPlayers} שחקנים`}
             {canStart && <Icon name="arrow" size={18} />}
           </button>
         )}
@@ -646,7 +648,7 @@ function Finish({
         {duel && (
           <button className="btn btn-ghost" onClick={onNewOpponent}>
             <Icon name="target" size={16} />
-            חפש יריב חדש
+            חפשו יריב חדש
           </button>
         )}
 

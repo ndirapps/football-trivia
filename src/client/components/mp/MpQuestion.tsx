@@ -25,6 +25,7 @@ import { Icon } from "../Icon";
 import "../../pages/QuizPage.css";
 import "../FreeTextAnswer.css";
 import "./mp.css";
+import { isolateLatin, hintText } from "../../lib/bidi";
 
 const OPTION_KEYS = ["א", "ב", "ג", "ד", "ה", "ו"];
 
@@ -77,14 +78,14 @@ export function MpQuestion(props: MpQuestionProps) {
             .map((clue, i) => (
               <li key={i} className="clue" style={{ "--i": i } as React.CSSProperties}>
                 <span className="clue-dot" aria-hidden="true" />
-                <span>{clue.text}</span>
+                <span>{isolateLatin(clue.text)}</span>
               </li>
             ))}
         </ol>
       )}
 
       <h2 className="q" id="mp-q">
-        {question.questionHe}
+        {isolateLatin(question.questionHe)}
       </h2>
 
       {hints.length > 0 && (
@@ -92,7 +93,7 @@ export function MpQuestion(props: MpQuestionProps) {
           {hints.map((hint, i) => (
             <li key={i} className="ft-hint a-fade-up">
               <Icon name="bulb" size={14} />
-              <span>{hint}</span>
+              <span>{isolateLatin(hintText(hint))}</span>
             </li>
           ))}
         </ol>
@@ -129,7 +130,7 @@ export function MpQuestion(props: MpQuestionProps) {
                 <span className="opt-key" aria-hidden="true">
                   {OPTION_KEYS[i] ?? i + 1}
                 </span>
-                <span className="opt-text">{option.text}</span>
+                <span className="opt-text">{isolateLatin(option.text)}</span>
                 {isChosen && !reveal && (
                   <>
                     <span className="opt-mark" aria-hidden="true">
@@ -176,9 +177,9 @@ export function MpQuestion(props: MpQuestionProps) {
       {reveal && (
         <div className="mp-q-answer a-fade-up">
           <p className="mp-q-answer-line">
-            התשובה: <b>{reveal.correctAnswer}</b>
+            התשובה: <b><bdi>{reveal.correctAnswer}</bdi></b>
           </p>
-          {reveal.explanationHe && <p className="why">{reveal.explanationHe}</p>}
+          {reveal.explanationHe && <p className="why">{isolateLatin(reveal.explanationHe)}</p>}
         </div>
       )}
     </article>

@@ -95,13 +95,12 @@ describe("content security policy", () => {
     assert.match(policy, /form-action 'self'/);
   });
 
-  it("keeps the font provider the stylesheet actually uses", () => {
-    // global.css opens with an @import for Rubik and Assistant. The stylesheet
-    // request is style-src; the font files are font-src. Getting this wrong
-    // silently falls back to a system font, which is why it is asserted.
+  it("serves fonts from the app itself, with no third-party font host", () => {
+    // Rubik and Assistant are bundled (@fontsource-variable), so the policy
+    // allows fonts from 'self' only and names no Google host.
     const policy = contentSecurityPolicy(https, null);
-    assert.match(policy, /style-src [^;]*https:\/\/fonts\.googleapis\.com/);
-    assert.match(policy, /font-src [^;]*https:\/\/fonts\.gstatic\.com/);
+    assert.match(policy, /font-src 'self'/);
+    assert.doesNotMatch(policy, /fonts\.(googleapis|gstatic)\.com/);
   });
 
   it("uses no wildcard source anywhere", () => {

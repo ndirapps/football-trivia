@@ -5,6 +5,7 @@ import { sound } from "../lib/sound";
 import { motionAllowed } from "../lib/a11y";
 import { Icon } from "./Icon";
 import "./FreeTextAnswer.css";
+import { isolateLatin, hintText } from "../lib/bidi";
 
 export interface FreeTextResult {
   correct: boolean;
@@ -22,12 +23,22 @@ interface Props {
 /** How long the VAR card is held before the answer resolves. */
 const VAR_MS = 850;
 
+/** Two tries per question: a typo should not cost the whole question. */
+const ATTEMPTS = 2;
+
+/**
+ * Once the player has opened the keyboard on a touch device, keep it coming
+ * back on each new question instead of costing a tap every time.
+ */
+let keyboardWarm = false;
+
 export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
   const [value, setValue] = useState("");
   const [hintsShown, setHintsShown] = useState(0);
   const [confirmingReveal, setConfirmingReveal] = useState(false);
   const [shake, setShake] = useState(false);
   const [varCheck, setVarCheck] = useState<"checking" | "approved" | null>(null);
+  const [missed, setMissed] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,7 +46,8 @@ export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
     setHintsShown(0);
     setConfirmingReveal(false);
     setVarCheck(null);
-    if (!window.matchMedia?.("(pointer: coarse)").matches) inputRef.current?.focus();
+    setMissed(null);
+    if (keyboardWarm || !window.matchMedia?.("(pointer: coarse)").matches) inputRef.current?.focus();
   }, [question.id]);
 
   function submit() {
@@ -59,18 +71,31 @@ export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
     // nothing to review.
     const borderline = result.correct && (result.kind === "fuzzy" || result.kind === "token");
 
+    // First miss: say so and let them try again. A second-try hit counts like
+    // one hint, so it still scores below a clean first answer.
+    if (!result.correct && missed === null && ATTEMPTS > 1) {
+      sound.play("wrong");
+      setMissed(typed);
+      setValue("");
+      setShake(true);
+      window.setTimeout(() => setShake(false), 400);
+      inputRef.current?.focus();
+      return;
+    }
+    const usedHints = hintsShown + (missed !== null ? 1 : 0);
+
     if (borderline && motionAllowed()) {
       setVarCheck("checking");
       window.setTimeout(() => setVarCheck("approved"), VAR_MS * 0.62);
       window.setTimeout(() => {
         sound.play("correct");
-        onResolved({ correct: true, revealed: false, typed, hintsUsed: hintsShown });
+        onResolved({ correct: true, revealed: false, typed, hintsUsed: usedHints });
       }, VAR_MS);
       return;
     }
 
     sound.play(result.correct ? "correct" : "wrong");
-    onResolved({ correct: result.correct, revealed: false, typed, hintsUsed: hintsShown });
+    onResolved({ correct: result.correct, revealed: false, typed, hintsUsed: usedHints });
   }
 
   function reveal() {
@@ -98,7 +123,7 @@ export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
           {question.hints.slice(0, hintsShown).map((hint, i) => (
             <li key={i} className="ft-hint a-fade-up">
               <Icon name="bulb" size={14} />
-              <span>{hint}</span>
+              <span>{isolateLatin(hintText(hint))}</span>
             </li>
           ))}
         </ol>
@@ -117,6 +142,11 @@ export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
 
       {!resolved && !varCheck && (
         <>
+          {missed !== null && (
+            <p className="ft-retry a-fade-up" role="status">
+              לא בדיוק{missed ? <> (<bdi>{missed}</bdi>)</> : null}. נשאר עוד ניסיון אחד.
+            </p>
+          )}
           <form
             className={`ft-form ${shake ? "a-wrong" : ""}`}
             onSubmit={(e) => {
@@ -134,7 +164,10 @@ export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
               type="text"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="שם השחקן, המועדון או הנבחרת…"
+              onFocus={() => {
+                keyboardWarm = true;
+              }}
+              placeholder="התשובה שלכם…"
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
@@ -180,10 +213,10 @@ export function FreeTextAnswer({ question, onResolved, resolved }: Props) {
             {resolved.correct ? "נכון" : resolved.revealed ? "נחשף" : "לא נכון"}
           </p>
           {!resolved.correct && resolved.typed && (
-            <p className="ft-out-line faint">כתבתם: {resolved.typed}</p>
+            <p className="ft-out-line faint">כתבתם: <bdi>{resolved.typed}</bdi></p>
           )}
           <p className="ft-out-line">
-            התשובה: <b>{question.canonicalAnswer}</b>
+            התשובה: <b><bdi>{question.canonicalAnswer}</bdi></b>
           </p>
         </div>
       )}

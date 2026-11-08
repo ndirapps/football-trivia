@@ -7,8 +7,8 @@ import "./PrivacyPage.css";
  * The full disclosure.
  *
  * Every row below is checkable against `lib/privacy.ts` — these are the exact
- * keys the app writes, and nothing else. The Google Fonts request is listed
- * rather than glossed over, because "no third parties" would not be true.
+ * keys the app writes, and nothing else. Fonts are bundled, so there is no
+ * third-party font request to disclose.
  */
 export function PrivacyPage() {
   return (
@@ -48,9 +48,11 @@ export function PrivacyPage() {
             <Row k="fiq_welcome_seen" scope="local" why="באפליקציה: שמסך הפתיחה כבר הוצג, כדי שלא יחזור בכל פתיחה" cat="הכרחי" />
             <Row k="fiq_mp_token" scope="session" why="מזהה זמני לחדר רב משתתפים, כדי שרענון או נפילת רשת יחזירו אתכם לאותו מקום עם אותו ניקוד" cat="הכרחי" />
             <Row k="fiq_daily_reminder" scope="local" why="באפליקציה: אם ביקשתם תזכורת יומית לאתגר. התזכורת עצמה מתוזמנת בטלפון ולא נשלחת מאיתנו" cat="העדפות" />
+            <Row k="fiq_answer_mode" scope="local" why="איך בחרתם לענות בהתחלה המהירה (הקלדה או אמריקאי), כדי שלא נשאל כל פעם" cat="העדפות" />
             <Row k="fiq_mp_name" scope="local" why="השם שבחרתם לרב משתתפים, כדי לא להקליד אותו כל פעם" cat="העדפות" />
             <Row k="fiq_recent_questions" scope="local" why="מזהים של שאלות שראיתם, כדי להעדיף שאלות חדשות" cat="היסטוריה" />
             <Row k="fiq_mp_stats" scope="local" why="ספירה מקומית של משחקי רב משתתפים, נצחונות והפסדים" cat="היסטוריה" />
+            <Row k="fiq_daily_record" scope="local" why="התוצאה שלכם באתגר היומי של היום, כדי להראות שכבר שיחקתם" cat="היסטוריה" />
           </div>
           <p className="policy-note">
             כל מה שב-<code>sessionStorage</code> נמחק לבד כשסוגרים את הכרטיסייה.
@@ -88,9 +90,8 @@ export function PrivacyPage() {
 
         <Clause title="צדדים שלישיים">
           <p>
-            הגופנים (Rubik ו-Assistant) נטענים מ-Google Fonts, ולכן כתובת ה-IP שלכם נחשפת אליהם
-            בטעינת הדף. זה הצד השלישי היחיד, והוא מוזכר כאן כי &rdquo;אפס צדדים שלישיים&ldquo; לא
-            היה נכון. האפליקציה מתארחת ב-Cloudflare Workers, שמעבדת את הבקשות כספקית תשתית. מי שפותח
+            הגופנים (Rubik ו-Assistant) נטענים מתוך האפליקציה עצמה, בלי בקשה לשרתים של אחרים.
+            האפליקציה מתארחת ב-Cloudflare Workers, שמעבדת את הבקשות כספקית תשתית. מי שפותח
             חשבון מתחבר דרך Apple, שמאמתת את הזהות בצד שלה ומעבירה לנו רק את המזהה האנונימי.
           </p>
         </Clause>

@@ -10,7 +10,7 @@
 .mp-home-head { text-align: center; }
 
 .mp-home-head .tiny {
-  letter-spacing: 0.22em;
+  letter-spacing: 0;
   color: var(--green);
 }
 
@@ -23,7 +23,7 @@
 .mp-home-sub {
   margin-block-start: 8px;
   color: var(--text-2);
-  font-size: 1.02rem;
+  font-size: 1rem;
 }
 
 .mp-home-section {
@@ -33,9 +33,9 @@
 }
 
 .mp-home-h2 {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0;
   color: var(--text-3);
   text-transform: none;
 }
@@ -108,20 +108,20 @@
 .mp-mode-title {
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.08rem;
+  font-size: 1.125rem;
 }
 
 .mp-mode-tag {
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
   color: var(--green);
 }
 
 .mp-mode.is-on .mp-mode-tag { color: var(--green-bright); }
 
 .mp-mode-blurb {
-  font-size: 0.86rem;
+  font-size: 0.875rem;
   color: var(--text-2);
   line-height: 1.45;
 }
@@ -150,7 +150,7 @@
 .mp-join-input {
   flex: 1;
   letter-spacing: 0.16em;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   text-align: center;
 }
 
@@ -183,10 +183,10 @@
 .mp-random-title {
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.08rem;
+  font-size: 1.125rem;
 }
 
-.mp-random-sub { font-size: 0.86rem; color: var(--text-2); }
+.mp-random-sub { font-size: 0.875rem; color: var(--text-2); }
 
 .mp-home-error {
   padding: 12px 14px;

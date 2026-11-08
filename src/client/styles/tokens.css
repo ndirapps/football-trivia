@@ -34,7 +34,7 @@
   /* ---- Type: warm off-white so the navy does not read as cold ---- */
   --text: #f1f0ea;
   --text-2: #aebbcc;
-  --text-3: #75869c;
+  --text-3: #8798ae;   /* 4.9:1 on --surface: AA for the small labels it carries */
   --on-green: #04180c;
   --on-amber: #241802;
 
@@ -61,8 +61,8 @@
      Rubik for anything structural or numeric (it has a real Hebrew cut and
      excellent tabular figures); Assistant for running text, where its
      lighter colour and wider counters read better at small sizes. */
-  --font-head: "Rubik", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-body: "Assistant", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-head: "Rubik Variable", "Rubik", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: "Assistant Variable", "Assistant", "Segoe UI", system-ui, -apple-system, sans-serif;
 
   /* ---- Geometry: friendly, modest. Not pills, not sharp corners. ---- */
   --r-xs: 8px;
@@ -93,6 +93,13 @@
 
   /* Accessibility menu writes these; everything scales off them. */
   --text-scale: 1;
+
+  /* Aliases a few multiplayer rules reach for. */
+  --accent: var(--green);
+  --text-dim: var(--text-3);
+
+  /* Minimum touch target (Apple HIG). */
+  --tap: 44px;
 }
 
 /* ============================================================

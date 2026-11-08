@@ -25,10 +25,7 @@
 //                               anywhere in the app (see SECURITY.md) it is not
 //                               a route to one either.
 //
-//   fonts.googleapis.com        global.css opens with an @import for Rubik and
-//   fonts.gstatic.com           Assistant. The stylesheet request is made BY the
-//                               bundled CSS, so it is style-src, and the font
-//                               files themselves are font-src.
+// Fonts (Rubik, Assistant) are bundled with the app, so no font host is allowed.
 //
 // Everything else is closed: no 'unsafe-eval', no wildcards, no inline script
 // except the one bootstrap block, which carries a per-response nonce.
@@ -57,8 +54,8 @@ export function contentSecurityPolicy(url: URL, nonce: string | null): string {
   return [
     "default-src 'self'",
     `script-src ${script}`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data:",
     "img-src 'self' data:",
     `connect-src 'self' ${socket}`,
     // The game synthesises its audio with the Web Audio API and loads no media

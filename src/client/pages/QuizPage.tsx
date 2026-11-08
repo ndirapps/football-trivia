@@ -19,6 +19,8 @@ import {
   type ShoutMessage,
 } from "../components/Shout";
 import "./QuizPage.css";
+import { isolateLatin } from "../lib/bidi";
+import { saveDailyRecord } from "../lib/dailyRecord";
 
 // Four transition styles, rotated so consecutive questions never repeat one.
 const TRANSITIONS = ["q-roll", "q-flip", "q-draw", "q-card"] as const;
@@ -170,6 +172,14 @@ export function QuizPage() {
     } catch {
       // Non-fatal — the player still sees their results even if logging fails.
     }
+    if (activeSession.isDaily && activeSession.dailyDate) {
+      saveDailyRecord({
+        date: activeSession.dailyDate,
+        correct: finalScore.correct,
+        total: finalScore.total,
+        points: finalScore.points,
+      });
+    }
     saveResult({
       quiz,
       answers,
@@ -219,14 +229,14 @@ export function QuizPage() {
               .map((clue, i) => (
                 <li key={i} className="clue" style={{ "--i": i } as React.CSSProperties}>
                   <span className="clue-dot" aria-hidden="true" />
-                  <span>{clue.text}</span>
+                  <span>{isolateLatin(clue.text)}</span>
                 </li>
               ))}
           </ol>
         )}
 
         <h1 className="q" id="q">
-          {question.questionHe}
+          {isolateLatin(question.questionHe)}
         </h1>
 
         {isFreeText ? (
@@ -257,7 +267,7 @@ export function QuizPage() {
                   <span className="opt-key" aria-hidden="true">
                     {OPTION_KEYS[i] ?? i + 1}
                   </span>
-                  <span className="opt-text">{opt.text}</span>
+                  <span className="opt-text">{isolateLatin(opt.text)}</span>
                   {answered && (opt.isCorrect || opt.id === selectedOptionId) && (
                     <span className="opt-mark" aria-hidden="true">
                       <Icon name={opt.isCorrect ? "check" : "cross"} size={17} strokeWidth={2.6} />
@@ -280,7 +290,7 @@ export function QuizPage() {
         </p>
 
         {answered && question.explanationHe && (
-          <p className="why a-fade-up">{question.explanationHe}</p>
+          <p className="why a-fade-up">{isolateLatin(question.explanationHe)}</p>
         )}
       </article>
 

@@ -11,6 +11,7 @@ import { Confetti } from "../components/Confetti";
 import { Icon, FlameMark } from "../components/Icon";
 import { sound } from "../lib/sound";
 import { ReminderOffer } from "../components/ReminderOffer";
+import { isolateLatin } from "../lib/bidi";
 import "./ResultsPage.css";
 
 function mmss(total: number): string {
@@ -44,6 +45,23 @@ export function ResultsPage() {
       map.set(question.category, entry);
     }
     return [...map.entries()].sort((a, b) => b[1].correct / b[1].total - a[1].correct / a[1].total);
+  }, [result]);
+
+  // What players most want after the score: which ones did I miss, and what was it?
+  const missed = useMemo(() => {
+    if (!result) return [];
+    return result.answers
+      .filter((a) => !a.correct)
+      .map((a) => {
+        const q = result.quiz.questions.find((x) => x.id === a.questionId);
+        if (!q) return null;
+        const correct = q.canonicalAnswer ?? q.options.find((o) => o.isCorrect)?.text ?? "";
+        const yours = a.revealed
+          ? null
+          : (a.typedAnswer ?? q.options.find((o) => o.id === a.selectedOptionId)?.text ?? null);
+        return { id: q.id, question: q.questionHe, correct, yours, revealed: !!a.revealed };
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null);
   }, [result]);
 
   if (!result) return null;
@@ -145,6 +163,29 @@ export function ResultsPage() {
             );
           })}
         </section>
+      )}
+
+      {missed.length > 0 && (
+        <details className="res-missed">
+          <summary>
+            השאלות שפספסתם <span className="num">({missed.length})</span>
+          </summary>
+          <ol>
+            {missed.map((m) => (
+              <li key={m.id}>
+                <p className="res-missed-q">{isolateLatin(m.question)}</p>
+                {m.yours && (
+                  <p className="res-missed-yours">
+                    <Icon name="cross" size={13} /> <bdi>{m.yours}</bdi>
+                  </p>
+                )}
+                <p className="res-missed-right">
+                  <Icon name="check" size={13} /> <bdi>{m.correct}</bdi>
+                </p>
+              </li>
+            ))}
+          </ol>
+        </details>
       )}
 
       <div className="res-actions">

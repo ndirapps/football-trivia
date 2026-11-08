@@ -89,7 +89,7 @@ export function AccountSheet({ onDismiss }: { onDismiss: () => void }) {
         )}
 
         <button className="btn btn-quiet account-sheet-guest" onClick={onDismiss}>
-          המשך כאורח
+          המשיכו כאורח
         </button>
 
         <Link to="/privacy" className="account-sheet-privacy" onClick={onDismiss}>

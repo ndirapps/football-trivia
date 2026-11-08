@@ -53,7 +53,7 @@
 .mp-duel-label {
   font-family: var(--font-head);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .mp-duel-cancelled { color: var(--text-3); }
@@ -94,13 +94,13 @@
 .mp-duel-timeout-head {
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.125rem;
 }
 
 .mp-duel-timeout-body {
   max-width: 36ch;
   color: var(--text-2);
-  font-size: 0.92rem;
+  font-size: 0.9375rem;
 }
 
 .mp-duel-timeout-actions {
