@@ -19,8 +19,10 @@ export function LeaveSheet({ inRoom, onStay, onLeave }: { inRoom: boolean; onSta
     return () => window.removeEventListener("keydown", onKey);
   }, [onStay]);
 
-  // Portalled to <body>: the header's backdrop-filter would otherwise become the
-  // containing block for this fixed sheet and trap it inside the bar.
+  // Portalled out of the header (its backdrop-filter would otherwise become the
+  // containing block and trap this fixed sheet inside the bar), but into #root,
+  // like AccountSheet: the boot watchdog in index.html treats anything covering
+  // the screen from outside #root as the app having vanished.
   return createPortal(
     <div className="account-sheet-backdrop" onClick={onStay}>
       <div
@@ -48,6 +50,6 @@ export function LeaveSheet({ inRoom, onStay, onLeave }: { inRoom: boolean; onSta
         </button>
       </div>
     </div>,
-    document.body
+    document.getElementById("root") ?? document.body
   );
 }
