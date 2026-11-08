@@ -61,9 +61,9 @@ describe("the default game starts without being touched", () => {
     the builder and pressing Start has to work, which means the defaults must be
     a real quiz and the widest pool the bank has.
   */
-  it("defaults to mixed on both axes, free text, ten, everywhere", () => {
+  it("defaults to mixed on both axes, multiple choice, ten, everywhere", () => {
     assert.equal(INITIAL_STATE.questionType, MIXED_TYPE_KEY);
-    assert.equal(INITIAL_STATE.answerMode, "FREE_TEXT");
+    assert.equal(INITIAL_STATE.answerMode, "MULTIPLE_CHOICE");
     assert.equal(INITIAL_STATE.difficulty, "MIXED");
     assert.equal(INITIAL_STATE.questionCount, 10);
     assert.equal(INITIAL_STATE.scope, SCOPE_ALL);

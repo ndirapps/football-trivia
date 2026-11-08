@@ -29,8 +29,8 @@ import { Icon } from "../components/Icon";
 import "./BuilderPage.css";
 
 const ANSWER_MODES: { key: AnswerMode; label: string }[] = [
-  { key: "FREE_TEXT", label: "פתוח" },
   { key: "MULTIPLE_CHOICE", label: "אמריקאי" },
+  { key: "FREE_TEXT", label: "פתוח" },
 ];
 
 const competitionLabel = (code: string) => COMPETITIONS.find((c) => c.code === code)?.nameHe ?? code;

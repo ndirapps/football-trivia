@@ -171,14 +171,14 @@ export interface BuilderState {
 /**
  * Defaults that are a real game.
  *
- * This is the one-tap requirement, as data: free text because that is the mode
- * the product is about, mixed on both axes because that is the broadest pool and
+ * This is the one-tap requirement, as data: multiple choice because it is the
+ * easiest way in for a new player, mixed on both axes because that is the broadest pool and
  * the most varied quiz, ten questions, everywhere. 14,194 questions match, so
  * Start works the moment the screen opens and nothing has to be touched.
  */
 export const INITIAL_STATE: BuilderState = {
   questionType: MIXED_TYPE_KEY,
-  answerMode: "FREE_TEXT",
+  answerMode: "MULTIPLE_CHOICE",
   difficulty: "MIXED",
   questionCount: 10,
   scope: SCOPE_ALL,
