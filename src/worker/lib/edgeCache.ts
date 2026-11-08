@@ -13,6 +13,34 @@
 // rule is written down once instead of being re-decided, slightly differently,
 // by whoever adds the next cached endpoint.
 
+/*
+ * MEMORY FIRST. The Cache API is a no-op on *.workers.dev hostnames, which is
+ * where this Worker is served, so on its own it cached nothing: every builder
+ * tap went to D1 and the free tier's 5M daily row reads ran out (2026-11-08).
+ * A small per-isolate map in front of it holds hot answers for as long as the
+ * isolate lives, on any hostname. It is bounded so it cannot grow without limit.
+ */
+const MEMORY_MAX = 500;
+const memory = new Map<string, { value: unknown; expires: number }>();
+
+function memoryGet<T>(key: Request): T | null {
+  const hit = memory.get(key.url);
+  if (!hit) return null;
+  if (hit.expires < Date.now()) {
+    memory.delete(key.url);
+    return null;
+  }
+  return hit.value as T;
+}
+
+function memoryPut(key: Request, value: unknown, maxAgeSeconds: number): void {
+  if (memory.size >= MEMORY_MAX) {
+    const oldest = memory.keys().next().value;
+    if (oldest !== undefined) memory.delete(oldest);
+  }
+  memory.set(key.url, { value, expires: Date.now() + maxAgeSeconds * 1000 });
+}
+
 /** The Workers-only `default` cache, which DOM's CacheStorage does not declare. */
 interface WorkersCacheStorage {
   readonly default: Cache;
@@ -34,6 +62,8 @@ function edge(): Cache | null {
  * will not parse — all three mean the same thing to a caller: compute it.
  */
 export async function cachedJson<T>(key: Request): Promise<T | null> {
+  const fromMemory = memoryGet<T>(key);
+  if (fromMemory !== null) return fromMemory;
   const cache = edge();
   if (!cache) return null;
   try {
@@ -54,6 +84,7 @@ export async function cachedJson<T>(key: Request): Promise<T | null> {
  * filter does not fit in a query string.
  */
 export async function putJson(key: Request, value: unknown, maxAgeSeconds: number): Promise<void> {
+  memoryPut(key, value, maxAgeSeconds);
   const cache = edge();
   if (!cache) return;
   try {

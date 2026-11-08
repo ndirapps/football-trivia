@@ -123,8 +123,8 @@ function optionsCacheKey(origin: string, filter: QuestionFilter, dimensions: str
   return new Request(`${origin}/__options/${encodeURIComponent(parts)}`, { method: "GET" });
 }
 
-/** Five minutes. The bank changes when a seed is applied, not while someone is choosing filters. */
-const COUNT_TTL_SECONDS = 300;
+/** Six hours. The bank changes when a seed is applied, not while someone is choosing filters. */
+const COUNT_TTL_SECONDS = 6 * 60 * 60;
 
 /**
  * "How many questions match this?" — the builder's live availability figure.
