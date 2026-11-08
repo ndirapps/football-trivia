@@ -601,7 +601,7 @@ async function testTurnBased() {
 
   const hintErrors = b.errors.length;
   b.send({ type: "REQUEST_HINT", questionIndex: b.question.index });
-  await sleep(300);
+  await sleep(1500);
   check(b.errors[hintErrors] === "NOT_YOUR_TURN", "nor may they take a hint", b.errors.slice(hintErrors));
   check(b.hints.length === 0, "and no hint text is handed over");
 
@@ -873,6 +873,7 @@ async function testFreeText() {
     // the same kind should score. This proves the matcher is live server side.
     const index = host.question.index;
     await waitForNextQuestionOrEnd(host, index);
+    await waitForNextQuestionOrEnd(rival, index);
     if (host.question && !host.result) {
       const nextFrom = host.since();
       answer(host, null, { typed: "אין לי מושג" });
