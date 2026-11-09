@@ -85,6 +85,7 @@ describe("keysToPurge", () => {
       [
         "fiq_a11y_v1",
         "fiq_account_token",
+        "fiq_blocked_players",
         "fiq_active_quiz",
         "fiq_answer_mode",
         "fiq_daily_record",

@@ -40,7 +40,7 @@ Football IQ הוא משחק טריוויה כדורגל בעברית — מהי�
 
 ## Age rating (questionnaire)
 All answers "None" / "No". Unrestricted web access: No. Gambling: No. Contests: No.
-User-generated content: room chat is preset messages only → No.
+User-generated content: room chat in the app is preset messages only; player display names are filtered server-side, and every room has report + block (guideline 1.2).
 → Expected rating: 4+
 
 ## App Privacy (nutrition labels)
@@ -57,7 +57,9 @@ Uses only standard HTTPS (exempt). "None of the algorithms mentioned above".
 ## App Review information
 - **Sign-in required:** No (guest play available)
 - **Contact:** Roy Asraf, support@nakama-software.com
-- **Notes for review:**
+- **Notes for review:** replaced after Apple's 2026-11-09 "2.1 Information Needed"
+  request. The current, paste-ready text and the screen-recording script are in
+  `appstore/review-notes.md`. Previous text, for reference:
   The app can be fully played as a guest (tap "המשיכו כאורח"). Sign in with Apple is optional and only syncs the player's name and stats; accounts can be deleted in-app from the profile screen (account button → profile → delete account). Multiplayer rooms: tap "משחק עם חברים", create a room and share the 6-digit code; room chat offers preset messages only, no free text. The app is in Hebrew.
 
 ## Build

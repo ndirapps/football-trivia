@@ -14,6 +14,7 @@ import type { ServerMessage } from "../../../shared/multiplayer/protocol";
 import type { MatchmakingState, MultiplayerErrorCode } from "../../../shared/multiplayer/types";
 import { sound } from "../sound";
 import { playerToken } from "./identity";
+import { blockedForMatchmaking } from "./blocklist";
 import { socketUrl } from "../origin";
 
 export interface MatchmakingSnapshot {
@@ -62,7 +63,7 @@ export function useMatchmaking() {
     socket.onopen = () => {
       setSnapshot((p) => ({ ...p, connected: true, error: null }));
       const name = searchingNameRef.current;
-      if (name) socket.send(JSON.stringify({ type: "JOIN_MATCHMAKING", name }));
+      if (name) socket.send(JSON.stringify({ type: "JOIN_MATCHMAKING", name, ...blockedForMatchmaking() }));
     };
 
     socket.onmessage = (event) => {
@@ -117,7 +118,7 @@ export function useMatchmaking() {
       setSnapshot((p) => ({ ...p, state: "SEARCHING", timedOut: false, match: null, error: null, waitedMs: 0 }));
       const socket = socketRef.current;
       if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: "JOIN_MATCHMAKING", name }));
+        socket.send(JSON.stringify({ type: "JOIN_MATCHMAKING", name, ...blockedForMatchmaking() }));
       } else {
         connect();
       }

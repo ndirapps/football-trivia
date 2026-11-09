@@ -12,42 +12,10 @@
 
 import { MESSAGE_MAX_LENGTH } from "./constants.ts";
 import { sanitizeShortText } from "./names.ts";
+import { containsBlockedLanguage } from "./moderation.ts";
 import { QUICK_MESSAGE_TEXT, type QuickMessageId } from "./types.ts";
 
-/**
- * Obvious abuse, blocked outright.
- *
- * Deliberately short. This is not moderation — a determined person routes around
- * any word list, and building a real one was explicitly not the job. It catches
- * the lazy case, which is most of it, and the length limit does the rest. Matching
- * is on a normalized, space-stripped form so "f u c k" and "ffuucckk" do not slip
- * through the gap a plain substring test leaves.
- */
-const BLOCKED_FRAGMENTS = [
-  "fuck", "shit", "bitch", "cunt", "nigg", "faggot", "retard", "rape",
-  "מפגר", "זונה", "שרמוטה", "בן זונה", "תמות", "מזדיין",
-];
-
-/** Lowercased, de-spaced, de-duplicated-runs form used only for the block test. */
-function abuseKey(text: string): string {
-  const squashed = text
-    .toLocaleLowerCase("he")
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^\p{L}\p{N}]/gu, "");
-  // Collapse a character repeated three or more times, so "shiiiit" reads as
-  // "shit" without also mangling ordinary doubled letters.
-  return squashed.replace(/(.)\1{2,}/gu, "$1");
-}
-
-export function containsBlockedLanguage(text: string): boolean {
-  const key = abuseKey(text);
-  const deduped = key.replace(/(.)\1+/gu, "$1");
-  return BLOCKED_FRAGMENTS.some((word) => {
-    const needle = abuseKey(word);
-    return key.includes(needle) || deduped.includes(needle.replace(/(.)\1+/gu, "$1"));
-  });
-}
+export { containsBlockedLanguage };
 
 export type MessageRejection = "EMPTY" | "TOO_LONG" | "BLOCKED";
 

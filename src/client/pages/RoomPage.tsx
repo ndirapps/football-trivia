@@ -53,6 +53,7 @@ import {
 } from "../components/mp/MpBoards";
 import { MpQuestion } from "../components/mp/MpQuestion";
 import { RoomSettingsPanel } from "../components/mp/RoomSettingsPanel";
+import { ReportSheet } from "../components/mp/ReportSheet";
 import "./RoomPage.css";
 
 export function RoomPage() {
@@ -64,6 +65,7 @@ export function RoomPage() {
   const [nameDraft, setNameDraft] = useState(() => savedPlayerName());
   const [joining, setJoining] = useState(false);
   const [flash, setFlash] = useState("");
+  const [reporting, setReporting] = useState(false);
   /** What this client sent for the question in play, for the "locked in" mark. */
   const [chosen, setChosen] = useState<{ optionId: number | null; text: string | null } | null>(null);
   const recordedRef = useRef<number | null>(null);
@@ -454,6 +456,28 @@ export function RoomPage() {
         <p className="mp-room-error a-pop" role="alert">
           {state.error.messageHe}
         </p>
+      )}
+
+      {/* Report and block (App Store guideline 1.2): always reachable while
+          anyone else is in the room, in every phase. */}
+      {room.players.some((p) => p.id !== you) && (
+        <button type="button" className="btn btn-quiet mp-report-open" onClick={() => setReporting(true)}>
+          <Icon name="shield" size={16} />
+          דיווח או חסימת שחקן
+        </button>
+      )}
+
+      {reporting && (
+        <ReportSheet
+          players={room.players.filter((p) => p.id !== you)}
+          roomCode={room.code}
+          onClose={() => setReporting(false)}
+          onLeave={() => {
+            setReporting(false);
+            leave();
+            navigate("/multiplayer");
+          }}
+        />
       )}
     </div>
   );
