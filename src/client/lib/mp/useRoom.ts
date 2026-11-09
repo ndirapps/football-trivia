@@ -29,6 +29,8 @@ import type {
   RoundReveal,
 } from "../../../shared/multiplayer/types";
 import { shouldShowMessage } from "./chatPolicy";
+import { blockedIds, maskRoom, maskStandings, withBlockedMasked } from "./blockMask";
+import { subscribeBlocklist } from "./blocklist";
 import { isNativeApp } from "../platform";
 import {
   HEARTBEAT_INTERVAL_MS,
@@ -141,6 +143,8 @@ export function useRoom(code: string | undefined, options: UseRoomOptions = {}) 
   const [state, setState] = useState<RoomClientState>(INITIAL);
 
   const socketRef = useRef<WebSocket | null>(null);
+  /** The latest room picture, read when deciding whether a sender is blocked. */
+  const roomRef = useRef<RoomView | null>(null);
   const attemptRef = useRef(0);
   const retryTimerRef = useRef<number | null>(null);
   /** Set when we close on purpose, so the reconnect loop knows to stand down. */
@@ -171,7 +175,34 @@ export function useRoom(code: string | undefined, options: UseRoomOptions = {}) 
     [send]
   );
 
-  const handle = useCallback((message: ServerMessage) => {
+  // A block takes effect at once on what is already on screen, not only on the
+  // next message from the room.
+  useEffect(
+    () =>
+      subscribeBlocklist(() => {
+        setState((previous) => {
+          if (!previous.room) return previous;
+          const ids = blockedIds(previous.room);
+          const room = maskRoom(previous.room);
+          roomRef.current = room;
+          return {
+            ...previous,
+            room,
+            standings: previous.standings ? maskStandings(previous.standings, ids) : previous.standings,
+            result: previous.result
+              ? { ...previous.result, standings: maskStandings(previous.result.standings, ids) }
+              : previous.result,
+            messages: previous.messages.filter((m) => !ids.has(m.playerId)),
+            reactions: previous.reactions.filter((r) => !ids.has(r.playerId)),
+          };
+        });
+      }),
+    []
+  );
+
+  const handle = useCallback((incoming: ServerMessage) => {
+    const message = withBlockedMasked(incoming, roomRef.current);
+    if (!message) return;
     // Any message carrying the server's clock re-syncs the offset. Doing it on
     // every such message rather than once at connect means a device that sleeps
     // and wakes mid-game corrects itself.
@@ -190,6 +221,7 @@ export function useRoom(code: string | undefined, options: UseRoomOptions = {}) 
       switch (message.type) {
         case "ROOM_STATE": {
           next.room = message.room;
+          roomRef.current = message.room;
           next.status = "open";
           // A full room picture is the strongest possible evidence the
           // connection is working, so it clears the stalled flag too.

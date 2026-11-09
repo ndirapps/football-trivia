@@ -9,6 +9,7 @@ import { multiplayerRoutes } from "./routes/multiplayer";
 import { healthRoutes } from "./routes/health";
 import { authRoutes } from "./routes/auth";
 import { meRoutes } from "./routes/me";
+import { reportRoutes } from "./routes/reports";
 import { cspNonce, harden, HASHED_ASSET_PREFIX, securityHeaders } from "./lib/security";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -117,6 +118,7 @@ app.route("/api/mp", multiplayerRoutes);
 app.route("/api/health", healthRoutes);
 app.route("/api/auth", authRoutes);
 app.route("/api/me", meRoutes);
+app.route("/api/reports", reportRoutes);
 
 // --------------------------------------------------------------------- failures
 

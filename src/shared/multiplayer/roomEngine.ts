@@ -22,6 +22,7 @@
 // what to fetch, and `beginGame` is handed the fetched questions. The engine
 // itself has no promises in it.
 
+import { blockKeyOf } from "./moderation.ts";
 import { matchAnswer, type MatchKind } from "../answerMatching.ts";
 import type { Question } from "../types.ts";
 import {
@@ -231,6 +232,7 @@ export class RoomEngine {
     return {
       id: p.id,
       name: p.name,
+      blockKey: blockKeyOf(p.token),
       isHost: p.id === this.state.hostId,
       connected: p.connected,
       reconnecting: !p.connected && p.disconnectedAt !== null && now - p.disconnectedAt < RECONNECT_GRACE_MS,

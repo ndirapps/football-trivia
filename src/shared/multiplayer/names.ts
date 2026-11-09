@@ -22,6 +22,7 @@
 // product feel like it does not expect Hebrew speakers.
 
 import { MAX_NAME_LENGTH, MIN_NAME_LENGTH } from "./constants.ts";
+import { containsBlockedLanguage } from "./moderation.ts";
 
 /**
  * Code points that are removed rather than rendered.
@@ -86,6 +87,9 @@ export function sanitizeShortText(raw: unknown, maxLength: number): string | nul
 export function sanitizePlayerName(raw: unknown): string | null {
   const cleaned = sanitizeShortText(raw, MAX_NAME_LENGTH);
   if (cleaned === null || cleaned.length < MIN_NAME_LENGTH) return null;
+  // A name is shown to strangers, so it gets the same abuse filter as a message
+  // (App Store guideline 1.2).
+  if (containsBlockedLanguage(cleaned)) return null;
   return cleaned;
 }
 

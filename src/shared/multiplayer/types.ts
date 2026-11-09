@@ -86,6 +86,8 @@ export const DEFAULT_TEAM_NAMES: Record<TeamId, string> = {
 export interface PublicPlayer {
   id: string;
   name: string;
+  /** Stable public handle derived from the private token; what "block" stores. */
+  blockKey: string;
   isHost: boolean;
   /** Socket currently attached. */
   connected: boolean;

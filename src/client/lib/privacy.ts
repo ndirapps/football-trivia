@@ -37,7 +37,9 @@ export const KEYS_BY_CATEGORY: Record<ConsentCategory, { local: string[]; sessio
   // `fiq_account_token` is the signed-in session. Essential while it exists —
   // without it you are signed out — and it is only ever written by signing in.
   // `fiq_welcome_seen` keeps the app's first screen from coming back.
-  essential: { local: ["fiq_account_token", "fiq_welcome_seen"], session: ["fiq_active_quiz", "fiq_last_result", "fiq_mp_token"] },
+  // `fiq_blocked_players` is the block list (App Store guideline 1.2): a safety
+  // control the player asked for, so it is essential, not a preference.
+  essential: { local: ["fiq_account_token", "fiq_welcome_seen", "fiq_blocked_players"], session: ["fiq_active_quiz", "fiq_last_result", "fiq_mp_token"] },
   preferences: { local: ["fiq_sound_enabled", "fiq_a11y_v1", "fiq_mp_name", "fiq_daily_reminder", "fiq_answer_mode"], session: [] },
   history: { local: ["fiq_recent_questions", "fiq_mp_stats", "fiq_daily_record"], session: [] },
 };

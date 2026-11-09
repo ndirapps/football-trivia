@@ -1,0 +1,46 @@
+.report-players {
+  align-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-block: 10px 16px;
+}
+
+.report-chip {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--surface-2, transparent);
+  color: var(--text-1, inherit);
+  font: inherit;
+  font-weight: 700;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.report-chip.is-on {
+  border-color: var(--green);
+  background: var(--green-wash);
+  color: var(--green-bright);
+}
+
+.report-chip:disabled { opacity: 0.5; }
+
+.report-error {
+  margin-block-end: 12px;
+  color: var(--red, #ff6b6b);
+  font-size: 0.95rem;
+}
+
+.mp-report-open {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 18px auto 0;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.report-done-body { margin-block-end: 20px; }

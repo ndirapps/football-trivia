@@ -14,6 +14,7 @@
 // timer or a question index it did not itself produce — the only numbers a
 // client may influence are "which option did I tap" and "what did I type".
 
+import { parseBlockedNames, parseBlockKeys } from "./moderation.ts";
 import {
   MAX_NAME_LENGTH,
   MESSAGE_MAX_LENGTH,
@@ -56,7 +57,7 @@ export type ClientMessage =
   | { type: "SET_TEAM"; playerId: string; team: TeamId }
   | { type: "AUTO_BALANCE" }
   | { type: "END_ROOM" }
-  | { type: "JOIN_MATCHMAKING"; name: string }
+  | { type: "JOIN_MATCHMAKING"; name: string; blocked: string[]; blockedNames: string[] }
   | { type: "CANCEL_MATCHMAKING" };
 
 export type ClientMessageType = ClientMessage["type"];
@@ -209,7 +210,14 @@ export function parseClientMessage(raw: unknown): ClientMessage | null {
     case "JOIN_MATCHMAKING": {
       const name = asString(value.name, MAX_NAME_LENGTH * 4);
       if (name === null) return null;
-      return value.type === "JOIN_ROOM" ? { type: "JOIN_ROOM", name } : { type: "JOIN_MATCHMAKING", name };
+      return value.type === "JOIN_ROOM"
+        ? { type: "JOIN_ROOM", name }
+        : {
+            type: "JOIN_MATCHMAKING",
+            name,
+            blocked: parseBlockKeys(value.blocked),
+            blockedNames: parseBlockedNames(value.blockedNames),
+          };
     }
 
     case "LEAVE_ROOM":
@@ -300,7 +308,7 @@ export const ERROR_COPY_HE: Record<MultiplayerErrorCode, string> = {
   INVALID_ROOM: "החדר הזה לא קיים. בדקו את הקוד ונסו שוב.",
   ROOM_EXPIRED: "החדר הזה נסגר. אפשר לפתוח חדר חדש.",
   ROOM_FULL: "החדר מלא.",
-  INVALID_NAME: "השם לא תקין. נסו שם קצר יותר.",
+  INVALID_NAME: "השם לא תקין. נסו שם אחר, קצר ומכבד.",
   GAME_ALREADY_STARTED: "המשחק כבר התחיל.",
   NOT_JOINED: "צריך להצטרף לחדר קודם.",
   NOT_HOST: "רק המארח יכול לעשות את זה.",

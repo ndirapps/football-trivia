@@ -26,6 +26,7 @@ import {
   randomDuelSettings,
 } from "../../shared/multiplayer/constants";
 import { sanitizePlayerName } from "../../shared/multiplayer/names";
+import { blockKeyOf, nameBlockKey } from "../../shared/multiplayer/moderation";
 import { errorMessage, parseClientMessage, type ServerMessage } from "../../shared/multiplayer/protocol";
 import type { MatchmakingState } from "../../shared/multiplayer/types";
 import { allocateRoom } from "../multiplayer/allocate";
@@ -37,6 +38,11 @@ interface QueueAttachment {
   queuedAt: number;
   /** The player's reconnect token, so the same person cannot occupy two slots. */
   token: string;
+  /** This player's own block key, and the keys of players they blocked. */
+  key?: string;
+  blocked?: string[];
+  /** Normalized names this player blocked (see nameBlockKey). */
+  blockedNames?: string[];
 }
 
 /** How often waiting players are pinged and pairing is retried. */
@@ -169,7 +175,15 @@ export class MatchmakerDurableObject extends DurableObject<Env> {
       }
 
       const now = Date.now();
-      this.setEntry(ws, { ...entry, state: "SEARCHING", name, queuedAt: now });
+      this.setEntry(ws, {
+        ...entry,
+        state: "SEARCHING",
+        name,
+        queuedAt: now,
+        key: blockKeyOf(entry.token),
+        blocked: message.blocked,
+        blockedNames: message.blockedNames,
+      });
       this.post(ws, this.status("SEARCHING", this.waiting().length, 0, false));
 
       await this.pair();
@@ -245,7 +259,9 @@ export class MatchmakerDurableObject extends DurableObject<Env> {
       const queue = this.waiting();
       if (queue.length < 2) return;
 
-      const [a, b] = queue;
+      const match = firstCompatiblePair(queue);
+      if (!match) return;
+      const [a, b] = match;
 
       // Claimed before the await so that nothing re-enters and matches either of
       // them again while the room is being created.
@@ -267,4 +283,30 @@ export class MatchmakerDurableObject extends DurableObject<Env> {
       this.post(b.ws, { type: "MATCH_FOUND", roomCode: code, opponentName: a.entry.name });
     }
   }
+}
+
+type Waiting = { ws: WebSocket; entry: QueueAttachment };
+
+/** True when either player has blocked the other. */
+function blocks(a: QueueAttachment, b: QueueAttachment): boolean {
+  return blocksOneWay(a, b) || blocksOneWay(b, a);
+}
+
+function blocksOneWay(blocker: QueueAttachment, other: QueueAttachment): boolean {
+  if (other.key && blocker.blocked?.includes(other.key)) return true;
+  return Boolean(blocker.blockedNames?.includes(nameBlockKey(other.name)));
+}
+
+/**
+ * The oldest two players who have not blocked each other. Blocking (App Store
+ * guideline 1.2) means a blocked player is never put in front of the blocker
+ * again, so an incompatible pair is skipped rather than matched.
+ */
+function firstCompatiblePair(queue: Waiting[]): [Waiting, Waiting] | null {
+  for (let i = 0; i < queue.length; i++) {
+    for (let j = i + 1; j < queue.length; j++) {
+      if (!blocks(queue[i].entry, queue[j].entry)) return [queue[i], queue[j]];
+    }
+  }
+  return null;
 }

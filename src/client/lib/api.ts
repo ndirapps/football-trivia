@@ -438,3 +438,16 @@ export function mergeLocalStatsRequest(local: {
 export function deleteAccountRequest(): Promise<{ deleted: true }> {
   return request("/api/me", { method: "DELETE", timeoutMs: TIMEOUT_HEAVY_MS });
 }
+
+export type ReportReason = "offensive_name" | "offensive_message" | "cheating" | "other";
+
+/** Reports a player to the developer (App Store guideline 1.2). Open to guests. */
+export function reportPlayerRequest(payload: {
+  roomCode: string | null;
+  blockKey: string;
+  name: string;
+  reason: ReportReason;
+  message?: string | null;
+}): Promise<{ reported: true }> {
+  return request("/api/reports", { method: "POST", body: payload });
+}
