@@ -68,7 +68,7 @@ Uses only standard HTTPS (exempt). "None of the algorithms mentioned above".
 ## Screenshots
 - 6.9" (1320×2868, iPhone 17 Pro Max simulator): appstore/screenshots-6.9/
 - 6.3" (1206×2622, resized; this is the slot App Store Connect asked for): appstore/screenshots-6.3/
-- Files: 01-welcome.png, 02-home.png, 03-question.png
+- Files: 01-builder.png, 02-home.png, 03-question.png
 
 ## Content Rights
 Answered "Yes, contains third-party content and I have the necessary rights" (facts and names from API-Football; no logos or images). API-Football terms allow building apps with the data but grant no league/club licence.

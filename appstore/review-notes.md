@@ -3,7 +3,7 @@
 Apple asked for six items in the **Notes** field of **App Review Information** in
 App Store Connect, plus a screen recording. The block below is paste-ready
 (it fits within the 4,000-character limit of the Notes field). After you record
-the video, replace `<VIDEO LINK>` with the link to it.
+the video, replace the placeholder with the link to it.
 
 ---
 
@@ -11,8 +11,8 @@ the video, replace `<VIDEO LINK>` with the link to it.
 
 ```
 1. SCREEN RECORDING
-Recorded on a physical iPhone running the latest iOS, starting from app launch: <VIDEO LINK>
-It shows: guest play, a daily challenge, a custom quiz, a random duel, a friends room, the in-room "report or block player" flow, Sign in with Apple, and account deletion. There is no paid content.
+Recorded on a physical iPhone running the latest iOS, starting from app launch: https://drive.google.com/file/d/1EDWma3MANIGANG_lspFJcLLUOi48oGgY/view?usp=sharing
+It shows: guest play, a quick quiz, the custom quiz builder, a friends room played live against a second player, the in-room "report or block player" flow, Sign in with Apple, and account deletion. There is no paid content.
 
 2. PURPOSE AND AUDIENCE
 Football IQ is a Hebrew football (soccer) trivia game for Hebrew-speaking fans, teens and adults. It turns football knowledge into a quick, social game: a daily challenge (the same 10 questions for everyone), custom quizzes (league, era, difficulty, multiple-choice or typed answers), "Who am I?" player puzzles, live 1-on-1 duels against a random opponent, and private rooms for playing with friends. It is free, with no ads, no in-app purchases and no tracking.
@@ -71,7 +71,7 @@ launching the app**.
    8. Profile → "מחיקת החשבון" → confirm → show that you are back as a guest.
 6. Stop the recording. Upload the video somewhere a link can be opened without
    logging in (YouTube "Unlisted", Google Drive "anyone with the link", Dropbox),
-   and put the link in place of `<VIDEO LINK>`.
+   and put the link in place of the placeholder.
 
 ## Before resubmitting
 
